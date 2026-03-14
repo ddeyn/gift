@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Birthday Gift</title>
     <!-- Fonts for English and Arabic support -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Nunito:wght@400;900&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
             --text-dark: #1a1a1a;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; touch-action: none; }
 
         body {
             background-color: var(--bg-light);
@@ -34,7 +34,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Allows clicks to pass through to buttons by default */
+            pointer-events: none; 
             z-index: 9999;
         }
 
@@ -52,6 +52,7 @@
             z-index: 10;
             overflow-y: auto;
             max-height: 90vh;
+            touch-action: auto; /* Allow scrolling inside container */
         }
 
         h1 { font-size: 1.8rem; text-align: center; color: var(--usa-blue); margin-bottom: 10px; }
@@ -72,6 +73,7 @@
             text-align: center;
             position: relative;
             z-index: 20;
+            touch-action: manipulation;
         }
         .btn:hover { background: var(--isr-blue); color: white; }
         .btn.unlocked { border-color: #2ecc71; background: #e8f8f0; }
@@ -333,11 +335,12 @@
             [mainMenu, quizCont, ...document.querySelectorAll('[id^="content-"]')].forEach(el => el.classList.add('hidden'));
         }
 
-        // --- IMPROVED PHYSICS LOGIC ---
+        // --- FINAL REPAIR: MANUAL DRAG SYSTEM ---
         window.onload = function() {
-            const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Query } = Matter;
+            const { Engine, Render, Runner, Bodies, Composite, Query, Body, Vector } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
+            const ctx = canvas.getContext('2d');
             
             const render = Render.create({
                 canvas: canvas,
@@ -351,19 +354,19 @@
             });
 
             // Boundaries
-            const wallOptions = { isStatic: true, render: { visible: false } };
-            const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight+30, window.innerWidth, 60, wallOptions);
-            const leftWall = Bodies.rectangle(-30, window.innerHeight/2, 60, window.innerHeight, wallOptions);
-            const rightWall = Bodies.rectangle(window.innerWidth+30, window.innerHeight/2, 60, window.innerHeight, wallOptions);
-            const roof = Bodies.rectangle(window.innerWidth/2, -30, window.innerWidth, 60, wallOptions);
+            const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight+30, window.innerWidth, 60, { isStatic: true, render: { visible: false } });
+            const leftWall = Bodies.rectangle(-30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true, render: { visible: false } });
+            const rightWall = Bodies.rectangle(window.innerWidth+30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true, render: { visible: false } });
+            const roof = Bodies.rectangle(window.innerWidth/2, -30, window.innerWidth, 60, { isStatic: true, render: { visible: false } });
             Composite.add(engine.world, [ground, leftWall, rightWall, roof]);
 
             // Single Chibi
             const chibiRadius = 40;
             const imgElement = document.getElementById('chibi1');
             const chibi = Bodies.circle(window.innerWidth/2, 100, chibiRadius, {
-                restitution: 0.8,
+                restitution: 0.6,
                 friction: 0.1,
+                density: 0.01,
                 render: {
                     sprite: {
                         texture: imgElement.src,
@@ -374,51 +377,64 @@
             });
             Composite.add(engine.world, chibi);
 
-            const mouse = Mouse.create(render.canvas);
-            const mouseConstraint = MouseConstraint.create(engine, {
-                mouse: mouse,
-                constraint: { stiffness: 0.1, render: { visible: false } }
-            });
-            Composite.add(engine.world, mouseConstraint);
+            // Manual Drag Variables
+            let isDragging = false;
+            let dragOffset = { x: 0, y: 0 };
 
-            // STABLE INTERACTION LOGIC
-            // By default, pointer-events are 'none'. 
-            // We only set it to 'auto' when a mouse/touch START event hits the chibi.
-            
-            const startHandler = (e) => {
-                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-                
-                // Sync Matter mouse with real position
-                mouse.position.x = clientX;
-                mouse.position.y = clientY;
+            function getInputPos(e) {
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX, y: clientY };
+            }
 
-                const hit = Query.point([chibi], mouse.position);
+            const onStart = (e) => {
+                const pos = getInputPos(e);
+                const hit = Query.point([chibi], pos);
                 if (hit.length > 0) {
-                    canvas.style.pointerEvents = 'auto'; // Enable interaction
+                    isDragging = true;
+                    dragOffset.x = chibi.position.x - pos.x;
+                    dragOffset.y = chibi.position.y - pos.y;
+                    canvas.style.pointerEvents = 'auto'; // Block UI during drag
+                    Body.setStatic(chibi, true); // Prevent gravity during drag
                 }
             };
 
-            const endHandler = () => {
-                canvas.style.pointerEvents = 'none'; // Always return control to UI on release
+            const onMove = (e) => {
+                if (!isDragging) return;
+                const pos = getInputPos(e);
+                Body.setPosition(chibi, {
+                    x: pos.x + dragOffset.x,
+                    y: pos.y + dragOffset.y
+                });
             };
 
-            // Events on window to ensure we catch 'release' even if mouse moves off canvas
-            window.addEventListener('mousedown', startHandler, true);
-            window.addEventListener('touchstart', startHandler, { passive: false, capture: true });
-            
-            window.addEventListener('mouseup', endHandler);
-            window.addEventListener('touchend', endHandler);
+            const onEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                canvas.style.pointerEvents = 'none'; // Return control to UI
+                Body.setStatic(chibi, false); // Re-enable gravity
+                // Give a little velocity based on last movement if desired
+                Body.setVelocity(chibi, { x: (Math.random() - 0.5) * 5, y: -2 });
+            };
+
+            // Capture globally to ensure release works
+            window.addEventListener('mousedown', onStart, true);
+            window.addEventListener('mousemove', onMove, true);
+            window.addEventListener('mouseup', onEnd, true);
+
+            window.addEventListener('touchstart', onStart, { passive: false });
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd, { passive: false });
 
             Render.run(render);
             const runner = Runner.create();
             Runner.run(runner, engine);
 
             window.addEventListener('resize', () => {
-                render.canvas.width = window.innerWidth;
-                render.canvas.height = window.innerHeight;
-                Matter.Body.setPosition(ground, { x: window.innerWidth/2, y: window.innerHeight+30 });
-                Matter.Body.setPosition(rightWall, { x: window.innerWidth+30, y: window.innerHeight/2 });
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                Body.setPosition(ground, { x: window.innerWidth/2, y: window.innerHeight+30 });
+                Body.setPosition(rightWall, { x: window.innerWidth+30, y: window.innerHeight/2 });
             });
         };
     </script>
