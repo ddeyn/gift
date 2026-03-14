@@ -34,8 +34,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 999;
+            pointer-events: all; /* Enabled to allow dragging */
+            z-index: 1000;
         }
 
         .container {
@@ -110,7 +110,7 @@
             border-left: 5px solid var(--usa-red);
             margin-bottom: 15px;
             font-size: 1.3rem;
-            direction: auto; /* Supports Arabic/English mix */
+            direction: auto;
         }
 
         .media-box video, .media-box img {
@@ -198,7 +198,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script>
-        // --- 15 QUESTIONS PER SECTION ---
         const quizzes = {
             messages: [
                 { q: "Fata Morgana: What is the real name of the 'Maid'?", type: "mcq", options: ["Morgana", "Giselle", "Maria", "Michel"], answer: "Giselle" },
@@ -253,12 +252,10 @@
             ]
         };
 
-        // --- STATE ---
         let currentSection = '';
         let currentIdx = 0;
         let unlocked = { messages: false, videos: false, drawings: false };
 
-        // --- DOM ---
         const mainMenu = document.getElementById('main-menu');
         const quizCont = document.getElementById('quiz-container');
         const qText = document.getElementById('question-text');
@@ -333,9 +330,9 @@
             [mainMenu, quizCont, ...document.querySelectorAll('[id^="content-"]')].forEach(el => el.classList.add('hidden'));
         }
 
-        // --- PHYSICS ENGINE (Matter.js) ---
+        // --- ENHANCED PHYSICS ENGINE (Matter.js) ---
         window.onload = function() {
-            const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint } = Matter;
+            const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
             
@@ -350,49 +347,62 @@
                 }
             });
 
-            // Walls
-            const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight + 30, window.innerWidth, 60, { isStatic: true });
-            const leftWall = Bodies.rectangle(-30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true });
-            const rightWall = Bodies.rectangle(window.innerWidth + 30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true });
-            Composite.add(engine.world, [ground, leftWall, rightWall]);
+            // Walls (Ground, Walls, Roof)
+            const wallOptions = { isStatic: true, render: { visible: false } };
+            const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight + 30, window.innerWidth, 60, wallOptions);
+            const leftWall = Bodies.rectangle(-30, window.innerHeight / 2, 60, window.innerHeight, wallOptions);
+            const rightWall = Bodies.rectangle(window.innerWidth + 30, window.innerHeight / 2, 60, window.innerHeight, wallOptions);
+            const roof = Bodies.rectangle(window.innerWidth / 2, -30, window.innerWidth, 60, wallOptions);
+            Composite.add(engine.world, [ground, leftWall, rightWall, roof]);
 
-            // Chibis
+            // Create Chibi bodies with correct sprite handling
             const createChibi = (x, y, imgId) => {
-                return Bodies.circle(x, y, 60, {
-                    restitution: 0.7,
+                const imgElement = document.getElementById(imgId);
+                return Bodies.circle(x, y, 75, { // Circle radius for collision
+                    restitution: 0.6,
+                    friction: 0.1,
                     render: {
                         sprite: {
-                            texture: document.getElementById(imgId).src,
-                            xScale: 0.5,
-                            yScale: 0.5
+                            texture: imgElement.src,
+                            xScale: 0.7, // Scale factor for size
+                            yScale: 0.7
                         }
                     }
                 });
             };
 
             const chibis = [
-                createChibi(100, -100, 'chibi1'),
-                createChibi(300, -300, 'chibi2'),
-                createChibi(500, -500, 'chibi3')
+                createChibi(window.innerWidth * 0.25, 100, 'chibi1'),
+                createChibi(window.innerWidth * 0.5, 100, 'chibi2'),
+                createChibi(window.innerWidth * 0.75, 100, 'chibi3')
             ];
             Composite.add(engine.world, chibis);
 
-            // Add Mouse Control
+            // Add Mouse Control (Critical for Dragging)
             const mouse = Mouse.create(render.canvas);
             const mouseConstraint = MouseConstraint.create(engine, {
                 mouse: mouse,
-                constraint: { stiffness: 0.2, render: { visible: false } }
+                constraint: {
+                    stiffness: 0.1,
+                    render: { visible: false }
+                }
             });
             Composite.add(engine.world, mouseConstraint);
-            render.mouse = mouse;
+            
+            // Fix scrolling behavior when interacting with canvas
+            mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
+            mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
 
             Render.run(render);
             const runner = Runner.create();
             Runner.run(runner, engine);
 
+            // Responsive update
             window.addEventListener('resize', () => {
                 render.canvas.width = window.innerWidth;
                 render.canvas.height = window.innerHeight;
+                Matter.Body.setPosition(ground, { x: window.innerWidth / 2, y: window.innerHeight + 30 });
+                Matter.Body.setPosition(rightWall, { x: window.innerWidth + 30, y: window.innerHeight / 2 });
             });
         };
     </script>
