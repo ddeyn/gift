@@ -77,6 +77,51 @@
         }
         .btn:hover { background: var(--isr-blue); color: white; }
         .btn.unlocked { border-color: #2ecc71; background: #e8f8f0; }
+        .btn.unlocked::after { content: " ✅"; }
+
+        /* Code Display Area */
+        .code-reveal {
+            background: #fdf2f2;
+            border: 2px dashed var(--usa-red);
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            border-radius: 10px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--usa-red);
+        }
+
+        /* Master Pass Input */
+        .master-pass-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+        .master-pass-section input {
+            padding: 8px;
+            width: 80px;
+            text-align: center;
+            border: 2px solid var(--isr-blue);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn-reset {
+            background: #eee;
+            border: 1px solid #ccc;
+            color: #666;
+            font-size: 0.7rem;
+            padding: 5px 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+            width: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
         .quiz-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .question-text { font-size: 1.1rem; margin-bottom: 15px; color: var(--usa-blue); }
@@ -146,10 +191,24 @@
         <p class="subtitle">We know that you love Israel, so we made an Israeli gift for you. ✡️🔯</p>
         
         <div class="menu">
+            <div id="reveal-1" class="code-reveal hidden">Step 1 Code: 1 - -</div>
             <button class="btn" id="btn-messages" onclick="handleSectionClick('messages')">Step 1: The Secret Intel</button>
+            
+            <div id="reveal-2" class="code-reveal hidden">Step 2 Code: - 5 -</div>
             <button class="btn" id="btn-videos" onclick="handleSectionClick('videos')">Step 2: Classified Footages</button>
+            
+            <div id="reveal-3" class="code-reveal hidden">Step 3 Code: - - 8</div>
             <button class="btn" id="btn-drawings" onclick="handleSectionClick('drawings')">Step 3: Mossad Archives</button>
         </div>
+
+        <!-- Master Unlock Section -->
+        <div class="master-pass-section">
+            <p style="font-size: 0.8rem; margin-bottom: 5px;">Secret Archive Code (3 Digits):</p>
+            <input type="text" id="master-code-input" maxlength="3" placeholder="???">
+            <button class="btn" style="width: auto; display: inline-block; padding: 5px 15px; font-size: 0.8rem;" onclick="checkMasterCode()">Unlock All</button>
+        </div>
+
+        <button class="btn-reset" onclick="resetProgress()">Reset All Progress / إعادة الأسئلة</button>
     </div>
 
     <!-- QUIZ CONTAINER -->
@@ -163,6 +222,7 @@
             <div id="options-container"></div>
             <button class="btn" style="background: var(--usa-blue); color: white;" onclick="submitAnswer()">Verify Answer</button>
             <div class="error-msg" id="error-msg"></div>
+            <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.8rem; margin-top:10px;">Cancel</button>
         </div>
     </div>
 
@@ -257,9 +317,56 @@
             ]
         };
 
+        // --- PROGRESS & CODE SYSTEM ---
+        let unlocked = { messages: false, videos: false, drawings: false };
+        const CORRECT_MASTER_CODE = "158"; 
+
+        function loadProgress() {
+            const saved = localStorage.getItem('birthday_progress');
+            if (saved) {
+                unlocked = JSON.parse(saved);
+                syncUI();
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('birthday_progress', JSON.stringify(unlocked));
+            syncUI();
+        }
+
+        function syncUI() {
+            for (let key in unlocked) {
+                if (unlocked[key]) {
+                    document.getElementById(`btn-${key}`).classList.add('unlocked');
+                    // Reveal code parts
+                    if(key === 'messages') document.getElementById('reveal-1').classList.remove('hidden');
+                    if(key === 'videos') document.getElementById('reveal-2').classList.remove('hidden');
+                    if(key === 'drawings') document.getElementById('reveal-3').classList.remove('hidden');
+                }
+            }
+        }
+
+        function checkMasterCode() {
+            const val = document.getElementById('master-code-input').value;
+            if(val === CORRECT_MASTER_CODE) {
+                unlocked = { messages: true, videos: true, drawings: true };
+                saveProgress();
+                alert("ACCESS GRANTED. Mossad Files Unlocked.");
+            } else {
+                alert("INVALID CODE. Internal Security Alerted.");
+            }
+        }
+
+        function resetProgress() {
+            if (confirm("Reset everything? / إعادة الأسئلة؟")) {
+                localStorage.removeItem('birthday_progress');
+                unlocked = { messages: false, videos: false, drawings: false };
+                location.reload();
+            }
+        }
+
         let currentSection = '';
         let currentIdx = 0;
-        let unlocked = { messages: false, videos: false, drawings: false };
 
         const mainMenu = document.getElementById('main-menu');
         const quizCont = document.getElementById('quiz-container');
@@ -315,7 +422,7 @@
                 currentIdx++;
                 if(currentIdx >= 15) {
                     unlocked[currentSection] = true;
-                    document.getElementById(`btn-${currentSection}`).classList.add('unlocked');
+                    saveProgress(); 
                     showSection(currentSection);
                 } else {
                     renderQ();
@@ -335,8 +442,10 @@
             [mainMenu, quizCont, ...document.querySelectorAll('[id^="content-"]')].forEach(el => el.classList.add('hidden'));
         }
 
-        // --- PHYSICS: SPINNING CHIBI SYSTEM (FIXED AND STABLE) ---
-        window.onload = function() {
+        // --- PHYSICS: SPINNING CHIBI SYSTEM ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProgress(); 
+
             const { Engine, Render, Runner, Bodies, Composite, Query, Body, Events } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
@@ -352,36 +461,23 @@
                 }
             });
 
-            // Boundaries
             const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight+30, window.innerWidth, 60, { isStatic: true, render: { visible: false } });
             const leftWall = Bodies.rectangle(-30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true, render: { visible: false } });
             const rightWall = Bodies.rectangle(window.innerWidth+30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true, render: { visible: false } });
             const roof = Bodies.rectangle(window.innerWidth/2, -30, window.innerWidth, 60, { isStatic: true, render: { visible: false } });
             Composite.add(engine.world, [ground, leftWall, rightWall, roof]);
 
-            const chibiRadius = 40;
             const imgElement = document.getElementById('chibi1');
-            const chibi = Bodies.circle(window.innerWidth/2, window.innerHeight - 100, chibiRadius, {
+            const chibi = Bodies.circle(window.innerWidth/2, window.innerHeight - 100, 40, {
                 restitution: 0.9,
                 friction: 0.05,
-                frictionAir: 0.01,
-                render: {
-                    sprite: {
-                        texture: imgElement.src,
-                        xScale: 0.4,
-                        yScale: 0.4
-                    }
-                }
+                render: { sprite: { texture: imgElement.src, xScale: 0.4, yScale: 0.4 } }
             });
             Composite.add(engine.world, chibi);
 
-            // SPINNING LOGIC: Force the chibi to rotate constantly
             Events.on(engine, 'beforeUpdate', () => {
                 if (!isDragging) {
-                    // Constant rotation speed
                     Body.setAngularVelocity(chibi, 0.15); 
-                    
-                    // Keep it floating/bouncing at the bottom area if it gets too high
                     if (chibi.position.y < window.innerHeight * 0.6) {
                         Body.applyForce(chibi, chibi.position, { x: 0, y: 0.005 });
                     }
@@ -391,53 +487,44 @@
             let isDragging = false;
             let dragOffset = { x: 0, y: 0 };
 
-            function getInputPos(e) {
+            const onStart = (e) => {
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: clientX, y: clientY };
-            }
-
-            const onStart = (e) => {
-                const pos = getInputPos(e);
-                const hit = Query.point([chibi], pos);
+                const hit = Query.point([chibi], { x: clientX, y: clientY });
                 if (hit.length > 0) {
                     isDragging = true;
-                    dragOffset.x = chibi.position.x - pos.x;
-                    dragOffset.y = chibi.position.y - pos.y;
-                    canvas.style.pointerEvents = 'auto'; // Block UI during drag
-                    Body.setStatic(chibi, true); // Prevent gravity during drag
+                    dragOffset.x = chibi.position.x - clientX;
+                    dragOffset.y = chibi.position.y - clientY;
+                    canvas.style.pointerEvents = 'auto';
+                    Body.setStatic(chibi, true);
                 }
             };
 
             const onMove = (e) => {
                 if (!isDragging) return;
-                const pos = getInputPos(e);
-                Body.setPosition(chibi, {
-                    x: pos.x + dragOffset.x,
-                    y: pos.y + dragOffset.y
-                });
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                Body.setPosition(chibi, { x: clientX + dragOffset.x, y: clientY + dragOffset.y });
             };
 
             const onEnd = () => {
                 if (!isDragging) return;
                 isDragging = false;
-                canvas.style.pointerEvents = 'none'; // Return control to UI
-                Body.setStatic(chibi, false); // Re-enable gravity
-                // Launch it with spin
+                canvas.style.pointerEvents = 'none';
+                Body.setStatic(chibi, false);
                 Body.setAngularVelocity(chibi, 0.5);
                 Body.setVelocity(chibi, { x: (Math.random() - 0.5) * 10, y: -5 });
             };
 
-            window.addEventListener('mousedown', onStart, true);
-            window.addEventListener('mousemove', onMove, true);
-            window.addEventListener('mouseup', onEnd, true);
+            window.addEventListener('mousedown', onStart);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
             window.addEventListener('touchstart', onStart, { passive: false });
             window.addEventListener('touchmove', onMove, { passive: false });
-            window.addEventListener('touchend', onEnd, { passive: false });
+            window.addEventListener('touchend', onEnd);
 
             Render.run(render);
-            const runner = Runner.create();
-            Runner.run(runner, engine);
+            Runner.run(Runner.create(), engine);
 
             window.addEventListener('resize', () => {
                 canvas.width = window.innerWidth;
@@ -445,7 +532,7 @@
                 Body.setPosition(ground, { x: window.innerWidth/2, y: window.innerHeight+30 });
                 Body.setPosition(rightWall, { x: window.innerWidth+30, y: window.innerHeight/2 });
             });
-        };
+        });
     </script>
 </body>
 </html>
