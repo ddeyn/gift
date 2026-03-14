@@ -52,7 +52,7 @@
             z-index: 10;
             overflow-y: auto;
             max-height: 90vh;
-            touch-action: auto; /* Allow scrolling inside container */
+            touch-action: auto;
         }
 
         h1 { font-size: 1.8rem; text-align: center; color: var(--usa-blue); margin-bottom: 10px; }
@@ -335,12 +335,11 @@
             [mainMenu, quizCont, ...document.querySelectorAll('[id^="content-"]')].forEach(el => el.classList.add('hidden'));
         }
 
-        // --- FINAL REPAIR: MANUAL DRAG SYSTEM ---
+        // --- PHYSICS: SPINNING CHIBI SYSTEM (FIXED AND STABLE) ---
         window.onload = function() {
-            const { Engine, Render, Runner, Bodies, Composite, Query, Body, Vector } = Matter;
+            const { Engine, Render, Runner, Bodies, Composite, Query, Body, Events } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
-            const ctx = canvas.getContext('2d');
             
             const render = Render.create({
                 canvas: canvas,
@@ -360,13 +359,12 @@
             const roof = Bodies.rectangle(window.innerWidth/2, -30, window.innerWidth, 60, { isStatic: true, render: { visible: false } });
             Composite.add(engine.world, [ground, leftWall, rightWall, roof]);
 
-            // Single Chibi
             const chibiRadius = 40;
             const imgElement = document.getElementById('chibi1');
-            const chibi = Bodies.circle(window.innerWidth/2, 100, chibiRadius, {
-                restitution: 0.6,
-                friction: 0.1,
-                density: 0.01,
+            const chibi = Bodies.circle(window.innerWidth/2, window.innerHeight - 100, chibiRadius, {
+                restitution: 0.9,
+                friction: 0.05,
+                frictionAir: 0.01,
                 render: {
                     sprite: {
                         texture: imgElement.src,
@@ -377,7 +375,19 @@
             });
             Composite.add(engine.world, chibi);
 
-            // Manual Drag Variables
+            // SPINNING LOGIC: Force the chibi to rotate constantly
+            Events.on(engine, 'beforeUpdate', () => {
+                if (!isDragging) {
+                    // Constant rotation speed
+                    Body.setAngularVelocity(chibi, 0.15); 
+                    
+                    // Keep it floating/bouncing at the bottom area if it gets too high
+                    if (chibi.position.y < window.innerHeight * 0.6) {
+                        Body.applyForce(chibi, chibi.position, { x: 0, y: 0.005 });
+                    }
+                }
+            });
+
             let isDragging = false;
             let dragOffset = { x: 0, y: 0 };
 
@@ -413,15 +423,14 @@
                 isDragging = false;
                 canvas.style.pointerEvents = 'none'; // Return control to UI
                 Body.setStatic(chibi, false); // Re-enable gravity
-                // Give a little velocity based on last movement if desired
-                Body.setVelocity(chibi, { x: (Math.random() - 0.5) * 5, y: -2 });
+                // Launch it with spin
+                Body.setAngularVelocity(chibi, 0.5);
+                Body.setVelocity(chibi, { x: (Math.random() - 0.5) * 10, y: -5 });
             };
 
-            // Capture globally to ensure release works
             window.addEventListener('mousedown', onStart, true);
             window.addEventListener('mousemove', onMove, true);
             window.addEventListener('mouseup', onEnd, true);
-
             window.addEventListener('touchstart', onStart, { passive: false });
             window.addEventListener('touchmove', onMove, { passive: false });
             window.addEventListener('touchend', onEnd, { passive: false });
