@@ -10,33 +10,38 @@
             --p5-red: #d31212;
             --p5-black: #000000;
             --p5-white: #ffffff;
+            --p5-blue: #0099ff;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
         body {
             background-color: var(--p5-black);
             color: var(--p5-white);
             font-family: 'Oswald', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .p5-bg {
+        /* GIF Background */
+        .gif-bg {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
-            background: var(--p5-black);
-        }
-
-        .p5-bg-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('background.gif'); 
+            background-image: url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOG03Nmw4aDNhaDhrN2xmdzltcGY0NzVkY2VxZTZ0cm4ycjBscm0zbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/NeeP6l7691EFH4BNjc/giphy.gif');
             background-size: cover;
             background-position: center;
-            opacity: 0.35;
-            mix-blend-mode: screen;
+            opacity: 0.5;
         }
 
         #chibi-canvas {
@@ -47,11 +52,42 @@
         }
 
         .container {
-            max-width: 380px;
-            width: 94%;
-            margin: 10px auto;
+            width: 90%;
+            max-width: 400px;
             position: relative;
             z-index: 10;
+        }
+
+        /* Phone/IM Container */
+        .im-container {
+            background: #111;
+            border: 4px solid var(--p5-white);
+            border-radius: 20px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(211, 18, 18, 0.5);
+        }
+
+        .im-header {
+            background: var(--p5-red);
+            padding: 10px;
+            text-align: center;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-style: italic;
+            border-bottom: 3px solid white;
+        }
+
+        .im-body {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #1a1a1a;
         }
 
         .p5-card {
@@ -59,63 +95,42 @@
             color: var(--p5-black);
             padding: 15px;
             transform: rotate(-0.5deg);
-            box-shadow: 10px 10px 0px var(--p5-red), -4px -4px 0px var(--p5-black);
+            box-shadow: 8px 8px 0px var(--p5-red), -2px -2px 0px var(--p5-black);
             border: 2px solid var(--p5-black);
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             text-transform: uppercase;
             font-style: italic;
             background: var(--p5-black);
             color: var(--p5-white);
             display: inline-block;
-            padding: 2px 10px;
-            transform: rotate(1deg) translateX(-10px);
+            padding: 2px 8px;
+            transform: rotate(1deg) translateX(-5px);
             margin-bottom: 8px;
-            box-shadow: 3px 3px 0px var(--p5-red);
-        }
-
-        .subtitle {
-            background: var(--p5-red);
-            color: var(--p5-white);
-            padding: 3px 10px;
-            font-weight: 900;
-            display: block;
-            width: fit-content;
-            transform: rotate(-1deg);
-            margin-bottom: 12px;
-            font-size: 0.75rem;
         }
 
         .btn {
             display: block;
             width: 100%;
-            padding: 8px;
-            margin: 6px 0;
+            padding: 10px;
+            margin: 8px 0;
             background: var(--p5-black);
             color: var(--p5-white);
             border: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 900;
             text-transform: uppercase;
             cursor: pointer;
             clip-path: polygon(1% 0%, 100% 3%, 99% 100%, 0% 97%);
             text-align: left;
-            padding-left: 25px;
+            padding-left: 20px;
             transition: 0.2s;
         }
 
-        .btn:active, .btn:hover { background: var(--p5-red); transform: scale(1.02); }
-        .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 2px solid var(--p5-red); }
-
-        .media-box {
-            margin: 8px 0;
-            border: 2px solid black;
-            box-shadow: 4px 4px 0px var(--p5-red);
-            background: #000;
-        }
-        .media-box img, .media-box video { width: 100%; display: block; }
+        .btn:active { background: var(--p5-red); }
+        .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 1px solid var(--p5-red); }
 
         .code-reveal {
             background: var(--p5-red);
@@ -124,102 +139,90 @@
             font-weight: 900;
             font-size: 0.7rem;
             display: inline-block;
-            margin-bottom: 4px;
-        }
-
-        .quiz-panel {
-            background: var(--p5-black);
-            color: var(--p5-white);
-            padding: 12px;
-            border: 3px solid var(--p5-white);
-            box-shadow: 6px 6px 0px var(--p5-red);
-        }
-
-        .question-text { font-size: 1rem; margin-bottom: 10px; font-weight: 900; line-height: 1.2; }
-
-        .option-label {
-            display: block;
-            padding: 8px;
-            margin-bottom: 5px;
-            background: var(--p5-white);
-            color: var(--p5-black);
-            font-weight: 900;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .option-label input { margin-right: 8px; }
-
-        input[type="text"] {
-            width: 100%; padding: 8px; margin-bottom: 8px; font-weight: 900; font-family: inherit;
         }
 
         /* Message Bubbles */
         .msg-bubble {
-            background: #f0f0f0;
+            max-width: 85%;
             padding: 8px 12px;
-            margin: 8px 0;
-            border-left: 4px solid var(--p5-red);
-            color: black;
-            font-weight: bold;
-            font-size: 0.8rem;
             position: relative;
-            clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);
+            font-weight: bold;
+            font-size: 0.85rem;
+            clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%);
+            animation: pop 0.3s ease-out;
         }
-        .msg-sender { color: var(--p5-red); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 2px; display: block; }
 
-        /* Trump Error Modal */
+        .msg-left {
+            align-self: flex-start;
+            background: var(--p5-white);
+            color: black;
+            border-left: 5px solid var(--p5-red);
+        }
+
+        .msg-sender {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+            color: var(--p5-red);
+        }
+
+        @keyframes pop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Quiz UI */
+        .quiz-panel {
+            background: var(--p5-black);
+            border: 2px solid white;
+            padding: 15px;
+        }
+
+        .option-label {
+            display: block;
+            padding: 10px;
+            margin-bottom: 6px;
+            background: white;
+            color: black;
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
         #trump-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .trump-card {
-            background: var(--p5-red);
-            color: white;
-            padding: 20px;
-            max-width: 300px;
-            text-align: center;
-            border: 5px solid white;
-            transform: rotate(2deg);
-            box-shadow: 15px 15px 0px black;
-        }
-
-        .trump-card h2 { font-size: 2rem; margin-bottom: 10px; font-weight: 900; }
-        .trump-card p { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
-
         .hidden { display: none !important; }
-
-        #hint-display { color: #f1c40f; font-size: 0.8rem; margin: 5px 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="p5-bg">
-        <div class="p5-bg-overlay"></div>
-    </div>
-    
+    <div class="gif-bg"></div>
     <canvas id="chibi-canvas"></canvas>
 
-    <!-- Trump Error Modal -->
+    <!-- Trump Modal -->
     <div id="trump-modal" class="hidden" onclick="closeTrump()">
-        <div class="trump-card">
-            <h2>WRONG!</h2>
-            <p>Your fucking dumb trump will 🍇 YOU</p>
-            <button class="btn" style="background:black; text-align:center; padding-left:0;">I UNDERSTAND</button>
+        <div style="background:var(--p5-red); padding:30px; text-align:center; border:4px solid white; transform:rotate(-2deg);">
+            <h2 style="font-size:2.5rem;">WRONG!</h2>
+            <p style="margin:15px 0;">YOUR TRUMP WILL 🍇 YOU</p>
+            <button class="btn" style="text-align:center; padding-left:0;">I UNDERSTAND</button>
         </div>
     </div>
 
-    <!-- Main Menu -->
-    <div id="main-menu" class="container">
-        <div class="p5-card">
+    <!-- Main App Layout -->
+    <div id="app-container" class="container">
+        
+        <!-- Main Menu -->
+        <div id="main-menu" class="p5-card">
             <h1>ROYAL</h1>
-            <span class="subtitle">STEAL HER HEART</span>
+            <p style="font-size: 0.7rem; font-weight: 900; margin-bottom: 10px;">STEAL HER HEART</p>
             
             <div id="reveal-1" class="code-reveal hidden">KEY 1: 11---</div>
             <button class="btn" id="btn-messages" onclick="handleSectionClick('messages')">PHANTOM CALLS</button>
@@ -230,161 +233,146 @@
             <div id="reveal-3" class="code-reveal hidden">KEY 3: ----7</div>
             <button class="btn" id="btn-drawings" onclick="handleSectionClick('drawings')">GALLERY OF THIEVES</button>
 
-            <div style="margin-top:12px; border-top: 2px dashed black; padding-top:10px;">
-                <input type="text" id="master-code-input" maxlength="5" placeholder="ENTER 5-DIGIT CODE">
-                <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0;" onclick="checkMasterCode()">UNLOCK ALL</button>
+            <div style="margin-top:10px; border-top: 1px solid black; padding-top:10px;">
+                <input type="text" id="master-code-input" maxlength="5" placeholder="CODE" style="width:50%; padding:5px;">
+                <button class="btn" style="display:inline-block; width:40%; padding-left:0; text-align:center; background:var(--p5-red);" onclick="checkMasterCode()">GO</button>
             </div>
         </div>
-    </div>
 
-    <!-- Quiz Panel -->
-    <div id="quiz-container" class="container hidden">
-        <div class="quiz-panel">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.7rem;">
-                <span id="quiz-title" style="color:var(--p5-red); font-weight:900;">TRIAL</span>
-                <span id="quiz-progress" style="background:white; color:black; padding:0 4px;">1/15</span>
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="quiz-panel hidden">
+            <div id="question-text" style="font-size:0.9rem; margin-bottom:10px; font-weight:900;">TRIAL...</div>
+            <div id="options-container"></div>
+            <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0;" onclick="submitAnswer()">EXECUTE</button>
+            <button class="btn" style="background:white; color:black; text-align:center; padding-left:0;" onclick="goHome()">RETREAT</button>
+        </div>
+
+        <!-- IM Message System -->
+        <div id="content-messages" class="im-container hidden">
+            <div class="im-header">PHANTOM CHAT</div>
+            <div class="im-body" id="chat-flow">
+                <!-- Messages will be injected here -->
             </div>
-            <div id="question-area">
-                <div class="question-text" id="question-text">Target Found. Respond?</div>
-                <div id="options-container"></div>
-                <div id="hint-display" class="hidden"></div>
-                
-                <div style="display:flex; gap:5px; margin-top:10px;">
-                    <button class="btn" style="flex:2; padding-left:0; text-align:center; background:var(--p5-red); margin:0;" onclick="submitAnswer()">ATTACK!</button>
-                    <button class="btn" style="flex:1; padding-left:0; text-align:center; background:var(--p5-white); color:black; margin:0;" onclick="showHint()">HINT</button>
-                </div>
-                <button onclick="goHome()" style="color:white; display:block; text-align:center; margin-top:10px; font-size:0.7rem; width:100%; background:none; border:none; cursor:pointer;">[ RETREAT ]</button>
-            </div>
+            <button class="btn" onclick="goHome()" style="margin:10px; background:var(--p5-red); text-align:center; padding-left:0;">CLOSE PHONE</button>
         </div>
-    </div>
 
-    <!-- Videos Section -->
-    <div id="content-videos" class="container hidden">
-        <div class="p5-card">
-            <h2 style="font-size:1.1rem; margin-bottom:8px; border-bottom:2px solid black;">RESTORED MEMORIES</h2>
-            <div class="media-box"><video controls><source src="video1.mp4" type="video/mp4"></video></div>
-            <div class="media-box"><video controls><source src="video2.mp4" type="video/mp4"></video></div>
-            <button class="btn" onclick="goHome()" style="background:var(--p5-red);">BACK TO HIDEWOUT</button>
+        <!-- Video/Photo Gallery -->
+        <div id="content-gallery" class="p5-card hidden">
+            <h2 id="gallery-title" style="font-size:1rem; margin-bottom:10px;">GALLERY</h2>
+            <div id="gallery-items" style="max-height: 50vh; overflow-y:auto;"></div>
+            <button class="btn" onclick="goHome()" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:10px;">BACK</button>
         </div>
-    </div>
 
-    <!-- Photos Section -->
-    <div id="content-drawings" class="container hidden">
-        <div class="p5-card">
-            <h2 style="font-size:1.1rem; margin-bottom:8px; border-bottom:2px solid black;">GALLERY OF THIEVES</h2>
-            <div class="media-box"><img src="photo1.jpg" alt="Memory 1"></div>
-            <div class="media-box"><img src="photo2.jpg" alt="Memory 2"></div>
-            <button class="btn" onclick="goHome()" style="background:var(--p5-red);">BACK TO HIDEWOUT</button>
-        </div>
-    </div>
-
-    <!-- Messages Section -->
-    <div id="content-messages" class="container hidden">
-        <div class="p5-card">
-            <h2 style="font-size:1.1rem; margin-bottom:8px; border-bottom:2px solid black;">PHANTOM CALLS</h2>
-            
-            <div class="msg-bubble"><span class="msg-sender">Morgana</span>Joker! The target is wide open. This birthday is our biggest heist yet!</div>
-            <div class="msg-bubble"><span class="msg-sender">Ryuji</span>For real?! I can't believe how much treasure we found today!</div>
-            <div class="msg-bubble"><span class="msg-sender">Ann</span>Everything is so beautiful... This celebration is perfect!</div>
-            <div class="msg-bubble"><span class="msg-sender">Yusuke</span>A truly aesthetic celebration. The composition of this party is flawless.</div>
-            <div class="msg-bubble"><span class="msg-sender">Makoto</span>I've analyzed the perimeter. The fun levels are at 100%.</div>
-            <div class="msg-bubble"><span class="msg-sender">Futaba</span>Heheh, I've hacked the cake. It's officially delicious!</div>
-            <div class="msg-bubble"><span class="msg-sender">Haru</span>I brought some special tea for everyone. Let's enjoy the moment!</div>
-
-            <button class="btn" onclick="goHome()" style="background:var(--p5-red);">BACK TO HIDEWOUT</button>
-        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script>
         const quizBank = [
-            { q: "Fata Morgana: Real name of 'The Maid'?", options: ["Giselle", "Maria", "Nellie", "Mell"], answer: "Giselle", h: "Think of a famous ballet." },
-            { q: "Persona 5: Morgana's Ultimate Persona?", options: ["Mercurius", "Zorro", "Diego", "Arsene"], answer: "Mercurius", h: "The messenger of the gods." },
-            { q: "Danganronpa: Kyoko's father's name?", options: ["Jin", "Makoto", "Byakuya", "Junko"], answer: "Jin", h: "Short name, starts with J." },
-            { q: "Code Geass: Lelouch's natural eye color?", options: ["Violet", "Green", "Red", "Blue"], answer: "Violet", h: "A shade of purple." },
-            { q: "Hollow Knight: Pale King's daughter?", options: ["Hornet", "Isma", "Dryya", "Ze'mer"], answer: "Hornet", h: "She wields a needle." },
-            { q: "Fata Morgana: Year of Door 4?", options: ["1099", "1200", "1450", "1066"], answer: "1099", h: "Just before 1100." },
-            { q: "P5: Does Akechi have a Palace?", options: ["None", "Casino", "Museum", "Lab"], answer: "None", h: "He shares the power of wild card." },
-            { q: "Code Geass: Lelouch's organization?", options: ["Black Knights", "Zeroes", "Order of Geass", "Britannia"], answer: "Black Knights", h: "Like a chess piece." },
-            { q: "Hollow Knight: Starting Masks?", options: ["5", "4", "6", "9"], answer: "5", h: "Number of fingers on a hand." },
-            { q: "Danganronpa: Kyoko's seat number?", options: ["6", "1", "15", "10"], answer: "6", h: "One more than five." },
-            { q: "Fata Morgana: Michel's biological sex?", options: ["Female", "Male", "Unknown", "Both"], answer: "Female", h: "The secret of the tower." },
-            { q: "P5: Is Morgana a cat in the real world?", options: ["True", "False", "Maybe", "Only at night"], answer: "True", h: "He fits in a bag!" },
-            { q: "Code Geass: Marianne's Knightmare?", options: ["Ganimede", "Gawain", "Lancelot", "Shinkiro"], answer: "Ganimede", h: "Named after a Jovian moon." },
-            { q: "Hollow Knight: Who is 'God of Gods'?", options: ["Void Given Focus", "Radiance", "Pale King", "Grimm"], answer: "Void Given Focus", h: "The final form in Pantheon 5." },
-            { q: "Code Geass: Favorite strategy game?", options: ["Chess", "Poker", "Shogi", "Go"], answer: "Chess", h: "Checkmate!" }
+            { q: "Fata Morgana: Real name of 'The Maid'?", options: ["Giselle", "Maria", "Nellie", "Mell"], answer: "Giselle" },
+            { q: "Persona 5: Morgana's Ultimate Persona?", options: ["Mercurius", "Zorro", "Diego", "Arsene"], answer: "Mercurius" },
+            { q: "Danganronpa: Kyoko's father's name?", options: ["Jin", "Makoto", "Byakuya", "Junko"], answer: "Jin" },
+            { q: "Code Geass: Lelouch's natural eye color?", options: ["Violet", "Green", "Red", "Blue"], answer: "Violet" },
+            { q: "Hollow Knight: Pale King's daughter?", options: ["Hornet", "Isma", "Dryya", "Ze'mer"], answer: "Hornet" },
+            { q: "Fata Morgana: Year of Door 4?", options: ["1099", "1200", "1450", "1066"], answer: "1099" },
+            { q: "P5: Does Akechi have a Palace?", options: ["None", "Casino", "Museum", "Lab"], answer: "None" },
+            { q: "Code Geass: Lelouch's organization?", options: ["Black Knights", "Zeroes", "Order of Geass", "Britannia"], answer: "Black Knights" },
+            { q: "Hollow Knight: Starting Masks?", options: ["5", "4", "6", "9"], answer: "5" },
+            { q: "Danganronpa: Kyoko's seat number?", options: ["6", "1", "15", "10"], answer: "6" },
+            { q: "Fata Morgana: Michel's biological sex?", options: ["Female", "Male", "Unknown", "Both"], answer: "Female" },
+            { q: "P5: Is Morgana a cat in the real world?", options: ["True", "False", "Maybe", "Only at night"], answer: "True" },
+            { q: "Code Geass: Marianne's Knightmare?", options: ["Ganimede", "Gawain", "Lancelot", "Shinkiro"], answer: "Ganimede" },
+            { q: "Hollow Knight: Who is 'God of Gods'?", options: ["Void Given Focus", "Radiance", "Pale King", "Grimm"], answer: "Void Given Focus" },
+            { q: "Code Geass: Favorite strategy game?", options: ["Chess", "Poker", "Shogi", "Go"], answer: "Chess" }
         ];
 
-        const quizzes = {
-            messages: [...quizBank],
-            videos: [...quizBank].reverse(),
-            drawings: [...quizBank].sort(() => Math.random() - 0.5)
-        };
+        const chatMessages = [
+            { s: "Morgana", m: "Joker! The target is wide open. This heist is personal." },
+            { s: "Ryuji", m: "For real?! Let's go and kick some palace butt!" },
+            { s: "Ann", m: "Everything is ready on my side. Don't be late!" },
+            { s: "Yusuke", m: "I've captured the aesthetic of our victory in my mind." },
+            { s: "Makoto", m: "Strategizing complete. Success probability: 100%." },
+            { s: "Futaba", m: "Hacking into the mainframe... Birthday mode: ACTIVE!" },
+            { s: "Haru", m: "I've prepared tea for after the mission. Be safe!" }
+        ];
 
         let unlocked = { messages: false, videos: false, drawings: false };
         let currentSection = '';
         let currentIdx = 0;
 
         function handleSectionClick(s) {
-            if(unlocked[s]) showSection(s);
-            else startQuiz(s);
+            if(unlocked[s]) {
+                if(s === 'messages') showMessages();
+                else showGallery(s);
+            } else {
+                startQuiz(s);
+            }
         }
 
         function startQuiz(s) {
             currentSection = s; currentIdx = 0;
             hideAll();
             document.getElementById('quiz-container').classList.remove('hidden');
-            document.getElementById('quiz-title').innerText = s.toUpperCase() + " TRIAL";
             renderQ();
         }
 
         function renderQ() {
-            const q = quizzes[currentSection][currentIdx];
-            document.getElementById('question-text').innerText = q.q;
-            document.getElementById('quiz-progress').innerText = `${currentIdx + 1}/15`;
-            document.getElementById('hint-display').classList.add('hidden');
-            
+            const q = quizBank[currentIdx];
+            document.getElementById('question-text').innerText = `${currentIdx+1}/15: ${q.q}`;
             const optCont = document.getElementById('options-container');
             optCont.innerHTML = '';
-            
             q.options.forEach(o => {
                 optCont.innerHTML += `<label class="option-label"><input type="radio" name="opt" value="${o}"> ${o}</label>`;
             });
         }
 
-        function showHint() {
-            const h = quizzes[currentSection][currentIdx].h;
-            const hd = document.getElementById('hint-display');
-            hd.innerText = `[Mona]: ${h}`;
-            hd.classList.remove('hidden');
-        }
-
         function submitAnswer() {
-            const q = quizzes[currentSection][currentIdx];
-            let ans = document.querySelector('input[name="opt"]:checked')?.value;
-
+            const q = quizBank[currentIdx];
+            const ans = document.querySelector('input[name="opt"]:checked')?.value;
             if(!ans) return;
-
-            if(ans.toString().toLowerCase() === q.answer.toString().toLowerCase()) {
+            if(ans === q.answer) {
                 currentIdx++;
                 if(currentIdx >= 15) {
                     unlocked[currentSection] = true;
                     goHome();
-                } else {
-                    renderQ();
-                }
+                } else renderQ();
             } else {
                 document.getElementById('trump-modal').classList.remove('hidden');
             }
         }
 
-        function closeTrump() {
-            document.getElementById('trump-modal').classList.add('hidden');
+        function showMessages() {
+            hideAll();
+            document.getElementById('content-messages').classList.remove('hidden');
+            const flow = document.getElementById('chat-flow');
+            flow.innerHTML = '';
+            chatMessages.forEach((msg, i) => {
+                setTimeout(() => {
+                    flow.innerHTML += `
+                        <div class="msg-bubble msg-left">
+                            <span class="msg-sender">${msg.s}</span>
+                            ${msg.m}
+                        </div>
+                    `;
+                    flow.scrollTop = flow.scrollHeight;
+                }, i * 600);
+            });
         }
 
-        function showSection(s) {
+        function showGallery(s) {
             hideAll();
-            document.getElementById(`content-${s}`).classList.remove('hidden');
+            const gall = document.getElementById('content-gallery');
+            const items = document.getElementById('gallery-items');
+            const title = document.getElementById('gallery-title');
+            gall.classList.remove('hidden');
+            items.innerHTML = '';
+            
+            if(s === 'videos') {
+                title.innerText = "RESTORED MEMORIES";
+                items.innerHTML = '<div style="padding:20px; text-align:center;">[ Video 1 ]<br>[ Video 2 ]</div>';
+            } else {
+                title.innerText = "GALLERY OF THIEVES";
+                items.innerHTML = '<div style="padding:20px; text-align:center;">[ Photo 1 ]<br>[ Photo 2 ]</div>';
+            }
         }
 
         function goHome() {
@@ -394,18 +382,24 @@
         }
 
         function hideAll() {
-            ['main-menu', 'quiz-container', 'content-messages', 'content-videos', 'content-drawings'].forEach(id => {
+            ['main-menu', 'quiz-container', 'content-messages', 'content-gallery'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
         }
 
         function syncUI() {
-            Object.keys(unlocked).forEach((k, i) => {
-                if(unlocked[k]) {
-                    document.getElementById(`btn-${k}`).classList.add('unlocked');
-                    document.getElementById(`reveal-${i+1}`).classList.remove('hidden');
-                }
-            });
+            if(unlocked.messages) {
+                document.getElementById('btn-messages').classList.add('unlocked');
+                document.getElementById('reveal-1').classList.remove('hidden');
+            }
+            if(unlocked.videos) {
+                document.getElementById('btn-videos').classList.add('unlocked');
+                document.getElementById('reveal-2').classList.remove('hidden');
+            }
+            if(unlocked.drawings) {
+                document.getElementById('btn-drawings').classList.add('unlocked');
+                document.getElementById('reveal-3').classList.remove('hidden');
+            }
         }
 
         function checkMasterCode() {
@@ -415,25 +409,39 @@
             }
         }
 
+        function closeTrump() { document.getElementById('trump-modal').classList.add('hidden'); }
+
+        // Matter.js Logic
         window.onload = () => {
-            const { Engine, Render, Runner, Bodies, Composite } = Matter;
+            const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
             const render = Render.create({
                 canvas: canvas, engine: engine,
                 options: { width: window.innerWidth, height: window.innerHeight, wireframes: false, background: 'transparent' }
             });
-            
-            for(let i=0; i<4; i++) {
-                const chibi = Bodies.circle(Math.random()*window.innerWidth, -100, 25, {
-                    restitution: 0.5,
-                    render: { sprite: { texture: 'chibi.png', xScale: 0.15, yScale: 0.15 } }
-                });
-                Composite.add(engine.world, chibi);
-            }
 
-            const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight+10, window.innerWidth, 20, { isStatic: true });
+            const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight+50, window.innerWidth, 100, { isStatic: true });
             Composite.add(engine.world, ground);
+
+            const spawn = () => {
+                const c = Bodies.circle(Math.random()*window.innerWidth, -50, 20, {
+                    restitution: 0.5,
+                    render: { sprite: { texture: 'chibi.png', xScale: 0.1, yScale: 0.1 } }
+                });
+                Composite.add(engine.world, c);
+            };
+
+            for(let i=0; i<6; i++) spawn();
+
+            Events.on(engine, 'afterUpdate', () => {
+                engine.world.bodies.forEach(b => {
+                    if(b.position.y > window.innerHeight + 40) {
+                        Matter.Body.setPosition(b, { x: Math.random()*window.innerWidth, y: -50 });
+                    }
+                });
+            });
+
             Render.run(render);
             Runner.run(Runner.create(), engine);
         };
