@@ -32,16 +32,16 @@
             align-items: center;
         }
 
-        /* GIF Background */
+        /* New GIF Background */
         .gif-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            background-image: url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOG03Nmw4aDNhaDhrN2xmdzltcGY0NzVkY2VxZTZ0cm4ycjBscm0zbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/NeeP6l7691EFH4BNjc/giphy.gif');
+            background-image: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJpM2FzY2pka2U0NTVyNWN1aW91c3V5emszZzN5ZHo3MGhsYmJoZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2Xflxzhs6AATQcRWQvK/giphy.gif');
             background-size: cover;
             background-position: center;
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         #chibi-canvas {
@@ -53,26 +53,26 @@
 
         .container {
             width: 90%;
-            max-width: 400px;
+            max-width: 450px;
             position: relative;
             z-index: 10;
         }
 
-        /* Phone/IM Container */
+        /* Classic Chat Container */
         .im-container {
             background: #111;
             border: 4px solid var(--p5-white);
             border-radius: 20px;
-            height: 80vh;
+            height: 75vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(211, 18, 18, 0.5);
+            box-shadow: 0 0 30px rgba(211, 18, 18, 0.7);
         }
 
         .im-header {
             background: var(--p5-red);
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             font-weight: 900;
             text-transform: uppercase;
@@ -82,89 +82,39 @@
 
         .im-body {
             flex: 1;
-            padding: 10px;
+            padding: 15px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
             background: #1a1a1a;
         }
 
-        .p5-card {
-            background: var(--p5-white);
-            color: var(--p5-black);
-            padding: 15px;
-            transform: rotate(-0.5deg);
-            box-shadow: 8px 8px 0px var(--p5-red), -2px -2px 0px var(--p5-black);
-            border: 2px solid var(--p5-black);
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            font-style: italic;
-            background: var(--p5-black);
-            color: var(--p5-white);
-            display: inline-block;
-            padding: 2px 8px;
-            transform: rotate(1deg) translateX(-5px);
-            margin-bottom: 8px;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            background: var(--p5-black);
-            color: var(--p5-white);
-            border: none;
-            font-size: 0.9rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            cursor: pointer;
-            clip-path: polygon(1% 0%, 100% 3%, 99% 100%, 0% 97%);
-            text-align: left;
-            padding-left: 20px;
-            transition: 0.2s;
-        }
-
-        .btn:active { background: var(--p5-red); }
-        .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 1px solid var(--p5-red); }
-
-        .code-reveal {
-            background: var(--p5-red);
-            color: white;
-            padding: 2px 6px;
-            font-weight: 900;
-            font-size: 0.7rem;
-            display: inline-block;
-        }
-
-        /* Message Bubbles */
+        /* Chat Bubbles */
         .msg-bubble {
             max-width: 85%;
-            padding: 8px 12px;
+            padding: 12px 15px;
             position: relative;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%);
             animation: pop 0.3s ease-out;
+            color: black;
         }
 
         .msg-left {
             align-self: flex-start;
             background: var(--p5-white);
-            color: black;
-            border-left: 5px solid var(--p5-red);
+            border-left: 6px solid var(--p5-red);
         }
 
         .msg-sender {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             color: var(--p5-red);
+            font-weight: 900;
         }
 
         @keyframes pop {
@@ -172,21 +122,71 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* Quiz UI */
-        .quiz-panel {
-            background: var(--p5-black);
-            border: 2px solid white;
-            padding: 15px;
+        /* UI Cards */
+        .p5-card {
+            background: var(--p5-white);
+            color: var(--p5-black);
+            padding: 20px;
+            transform: rotate(-0.5deg);
+            box-shadow: 10px 10px 0px var(--p5-red), -3px -3px 0px var(--p5-black);
+            border: 2px solid var(--p5-black);
         }
 
-        .option-label {
+        h1 {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            font-style: italic;
+            background: var(--p5-black);
+            color: var(--p5-white);
+            display: inline-block;
+            padding: 4px 12px;
+            transform: rotate(1deg) translateX(-5px);
+            margin-bottom: 10px;
+        }
+
+        .btn {
             display: block;
-            padding: 10px;
-            margin-bottom: 6px;
-            background: white;
-            color: black;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: var(--p5-black);
+            color: var(--p5-white);
+            border: none;
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            clip-path: polygon(1% 0%, 100% 3%, 99% 100%, 0% 97%);
+            text-align: left;
+            padding-left: 25px;
+            transition: 0.2s;
+        }
+
+        .btn:active { background: var(--p5-red); }
+        .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 2px solid var(--p5-red); }
+
+        /* Larger Gallery Items */
+        .media-box {
+            margin: 20px 0;
+            border: 4px solid black;
+            box-shadow: 8px 8px 0px var(--p5-red);
+            background: #000;
+            width: 100%;
+        }
+        .media-box img, .media-box video { 
+            width: 100%; 
+            display: block; 
+            max-height: 500px; /* تم تكبير الحجم بشكل ملحوظ */
+            object-fit: contain;
+        }
+
+        .code-reveal {
+            background: var(--p5-red);
+            color: white;
+            padding: 3px 8px;
             font-weight: 900;
             font-size: 0.8rem;
+            display: inline-block;
         }
 
         #trump-modal {
@@ -209,10 +209,10 @@
 
     <!-- Trump Modal -->
     <div id="trump-modal" class="hidden" onclick="closeTrump()">
-        <div style="background:var(--p5-red); padding:30px; text-align:center; border:4px solid white; transform:rotate(-2deg);">
-            <h2 style="font-size:2.5rem;">WRONG!</h2>
-            <p style="margin:15px 0;">YOUR TRUMP WILL 🍇 YOU</p>
-            <button class="btn" style="text-align:center; padding-left:0;">I UNDERSTAND</button>
+        <div style="background:var(--p5-red); padding:40px; text-align:center; border:5px solid white; transform:rotate(-2deg); box-shadow: 15px 15px 0 black;">
+            <h2 style="font-size:3rem;">WRONG!</h2>
+            <p style="margin:20px 0; font-weight: bold;">YOUR TRUMP WILL 🍇 YOU</p>
+            <button class="btn" style="text-align:center; padding-left:0; background: black;">I UNDERSTAND</button>
         </div>
     </div>
 
@@ -222,7 +222,7 @@
         <!-- Main Menu -->
         <div id="main-menu" class="p5-card">
             <h1>ROYAL</h1>
-            <p style="font-size: 0.7rem; font-weight: 900; margin-bottom: 10px;">STEAL HER HEART</p>
+            <p style="font-size: 0.8rem; font-weight: 900; margin-bottom: 15px;">STEAL HER HEART</p>
             
             <div id="reveal-1" class="code-reveal hidden">KEY 1: 11---</div>
             <button class="btn" id="btn-messages" onclick="handleSectionClick('messages')">PHANTOM CALLS</button>
@@ -233,34 +233,34 @@
             <div id="reveal-3" class="code-reveal hidden">KEY 3: ----7</div>
             <button class="btn" id="btn-drawings" onclick="handleSectionClick('drawings')">GALLERY OF THIEVES</button>
 
-            <div style="margin-top:10px; border-top: 1px solid black; padding-top:10px;">
-                <input type="text" id="master-code-input" maxlength="5" placeholder="CODE" style="width:50%; padding:5px;">
-                <button class="btn" style="display:inline-block; width:40%; padding-left:0; text-align:center; background:var(--p5-red);" onclick="checkMasterCode()">GO</button>
+            <div style="margin-top:15px; border-top: 2px solid black; padding-top:15px;">
+                <input type="text" id="master-code-input" maxlength="5" placeholder="CODE" style="width:50%; padding:8px; font-weight: 900;">
+                <button class="btn" style="display:inline-block; width:40%; padding-left:0; text-align:center; background:var(--p5-red); margin:0;" onclick="checkMasterCode()">GO</button>
             </div>
         </div>
 
         <!-- Quiz Container -->
-        <div id="quiz-container" class="quiz-panel hidden">
-            <div id="question-text" style="font-size:0.9rem; margin-bottom:10px; font-weight:900;">TRIAL...</div>
+        <div id="quiz-container" class="p5-card hidden" style="background: black; color: white; border-color: white;">
+            <div id="question-text" style="font-size:1rem; margin-bottom:15px; font-weight:900;">TRIAL...</div>
             <div id="options-container"></div>
             <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0;" onclick="submitAnswer()">EXECUTE</button>
             <button class="btn" style="background:white; color:black; text-align:center; padding-left:0;" onclick="goHome()">RETREAT</button>
         </div>
 
-        <!-- IM Message System -->
+        <!-- Classic Chat Messages -->
         <div id="content-messages" class="im-container hidden">
             <div class="im-header">PHANTOM CHAT</div>
             <div class="im-body" id="chat-flow">
-                <!-- Messages will be injected here -->
+                <!-- Messages will appear here -->
             </div>
-            <button class="btn" onclick="goHome()" style="margin:10px; background:var(--p5-red); text-align:center; padding-left:0;">CLOSE PHONE</button>
+            <button class="btn" onclick="goHome()" style="margin:10px; background:var(--p5-red); text-align:center; padding-left:0;">BACK TO MENU</button>
         </div>
 
-        <!-- Video/Photo Gallery -->
+        <!-- Video/Photo Gallery (Larger Display) -->
         <div id="content-gallery" class="p5-card hidden">
-            <h2 id="gallery-title" style="font-size:1rem; margin-bottom:10px;">GALLERY</h2>
-            <div id="gallery-items" style="max-height: 50vh; overflow-y:auto;"></div>
-            <button class="btn" onclick="goHome()" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:10px;">BACK</button>
+            <h2 id="gallery-title" style="font-size:1.1rem; margin-bottom:15px;">GALLERY</h2>
+            <div id="gallery-items" style="max-height: 60vh; overflow-y:auto;"></div>
+            <button class="btn" onclick="goHome()" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:15px;">BACK</button>
         </div>
 
     </div>
@@ -301,7 +301,7 @@
 
         function handleSectionClick(s) {
             if(unlocked[s]) {
-                if(s === 'messages') showMessages();
+                if(s === 'messages') startChat();
                 else showGallery(s);
             } else {
                 startQuiz(s);
@@ -321,7 +321,7 @@
             const optCont = document.getElementById('options-container');
             optCont.innerHTML = '';
             q.options.forEach(o => {
-                optCont.innerHTML += `<label class="option-label"><input type="radio" name="opt" value="${o}"> ${o}</label>`;
+                optCont.innerHTML += `<label style="display:block; background:white; color:black; padding:10px; margin-bottom:5px; font-weight:900;"><input type="radio" name="opt" value="${o}"> ${o}</label>`;
             });
         }
 
@@ -340,7 +340,7 @@
             }
         }
 
-        function showMessages() {
+        function startChat() {
             hideAll();
             document.getElementById('content-messages').classList.remove('hidden');
             const flow = document.getElementById('chat-flow');
@@ -354,7 +354,7 @@
                         </div>
                     `;
                     flow.scrollTop = flow.scrollHeight;
-                }, i * 600);
+                }, i * 700);
             });
         }
 
@@ -368,10 +368,16 @@
             
             if(s === 'videos') {
                 title.innerText = "RESTORED MEMORIES";
-                items.innerHTML = '<div style="padding:20px; text-align:center;">[ Video 1 ]<br>[ Video 2 ]</div>';
+                items.innerHTML = `
+                    <div class="media-box"><img src="https://via.placeholder.com/600x400/000000/FFFFFF?text=MEMORY+VIDEO+1" alt="Video placeholder"></div>
+                    <div class="media-box"><img src="https://via.placeholder.com/600x400/000000/FFFFFF?text=MEMORY+VIDEO+2" alt="Video placeholder"></div>
+                `;
             } else {
                 title.innerText = "GALLERY OF THIEVES";
-                items.innerHTML = '<div style="padding:20px; text-align:center;">[ Photo 1 ]<br>[ Photo 2 ]</div>';
+                items.innerHTML = `
+                    <div class="media-box"><img src="https://via.placeholder.com/600x800/000000/FFFFFF?text=JOKER+ART" alt="Art placeholder"></div>
+                    <div class="media-box"><img src="https://via.placeholder.com/600x800/000000/FFFFFF?text=PANTHER+ART" alt="Art placeholder"></div>
+                `;
             }
         }
 
@@ -427,16 +433,16 @@
             const spawn = () => {
                 const c = Bodies.circle(Math.random()*window.innerWidth, -50, 20, {
                     restitution: 0.5,
-                    render: { sprite: { texture: 'chibi.png', xScale: 0.1, yScale: 0.1 } }
+                    render: { sprite: { texture: 'chibi.png', xScale: 0.12, yScale: 0.12 } }
                 });
                 Composite.add(engine.world, c);
             };
 
-            for(let i=0; i<6; i++) spawn();
+            for(let i=0; i<7; i++) spawn();
 
             Events.on(engine, 'afterUpdate', () => {
                 engine.world.bodies.forEach(b => {
-                    if(b.position.y > window.innerHeight + 40) {
+                    if(b.position.y > window.innerHeight + 50) {
                         Matter.Body.setPosition(b, { x: Math.random()*window.innerWidth, y: -50 });
                     }
                 });
