@@ -34,8 +34,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Allows clicks to pass through by default */
-            z-index: 9999; /* Always on top */
+            pointer-events: none; /* Allows clicks to pass through to buttons by default */
+            z-index: 9999;
         }
 
         .container {
@@ -333,7 +333,7 @@
             [mainMenu, quizCont, ...document.querySelectorAll('[id^="content-"]')].forEach(el => el.classList.add('hidden'));
         }
 
-        // --- PHYSICS CORE ---
+        // --- IMPROVED PHYSICS LOGIC ---
         window.onload = function() {
             const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Query } = Matter;
             const engine = Engine.create();
@@ -362,8 +362,8 @@
             const chibiRadius = 40;
             const imgElement = document.getElementById('chibi1');
             const chibi = Bodies.circle(window.innerWidth/2, 100, chibiRadius, {
-                restitution: 0.7,
-                friction: 0.05,
+                restitution: 0.8,
+                friction: 0.1,
                 render: {
                     sprite: {
                         texture: imgElement.src,
@@ -381,34 +381,34 @@
             });
             Composite.add(engine.world, mouseConstraint);
 
-            // MAGIC: Toggle pointer-events based on proximity to Chibi
-            function checkInteractions(e) {
-                const pos = mouse.position;
-                const hit = Query.point([chibi], pos);
+            // STABLE INTERACTION LOGIC
+            // By default, pointer-events are 'none'. 
+            // We only set it to 'auto' when a mouse/touch START event hits the chibi.
+            
+            const startHandler = (e) => {
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                // Sync Matter mouse with real position
+                mouse.position.x = clientX;
+                mouse.position.y = clientY;
+
+                const hit = Query.point([chibi], mouse.position);
                 if (hit.length > 0) {
-                    canvas.style.pointerEvents = 'auto'; // Capture drag
-                } else {
-                    canvas.style.pointerEvents = 'none'; // Allow button clicks
+                    canvas.style.pointerEvents = 'auto'; // Enable interaction
                 }
-            }
+            };
 
-            // Sync mouse with real coordinates before checking
-            window.addEventListener('mousemove', (e) => {
-                mouse.position.x = e.clientX;
-                mouse.position.y = e.clientY;
-                checkInteractions(e);
-            });
+            const endHandler = () => {
+                canvas.style.pointerEvents = 'none'; // Always return control to UI on release
+            };
 
-            window.addEventListener('mousedown', checkInteractions);
-            window.addEventListener('touchstart', (e) => {
-                const touch = e.touches[0];
-                mouse.position.x = touch.clientX;
-                mouse.position.y = touch.clientY;
-                checkInteractions(e);
-            });
-
-            window.addEventListener('mouseup', () => canvas.style.pointerEvents = 'none');
-            window.addEventListener('touchend', () => canvas.style.pointerEvents = 'none');
+            // Events on window to ensure we catch 'release' even if mouse moves off canvas
+            window.addEventListener('mousedown', startHandler, true);
+            window.addEventListener('touchstart', startHandler, { passive: false, capture: true });
+            
+            window.addEventListener('mouseup', endHandler);
+            window.addEventListener('touchend', endHandler);
 
             Render.run(render);
             const runner = Runner.create();
@@ -417,6 +417,8 @@
             window.addEventListener('resize', () => {
                 render.canvas.width = window.innerWidth;
                 render.canvas.height = window.innerHeight;
+                Matter.Body.setPosition(ground, { x: window.innerWidth/2, y: window.innerHeight+30 });
+                Matter.Body.setPosition(rightWall, { x: window.innerWidth+30, y: window.innerHeight/2 });
             });
         };
     </script>
