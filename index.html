@@ -21,7 +21,7 @@
             background-color: var(--bg-light);
             color: var(--text-dark);
             font-family: 'Nunito', 'Cairo', sans-serif;
-            overflow-x: hidden;
+            overflow: hidden; /* Prevent body scroll to make dragging better */
             min-height: 100vh;
             background-image: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), 
                               url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text y="50" font-size="20">✡️</text></svg>');
@@ -34,27 +34,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Fix: Allow clicks to pass through to buttons but still interact with bodies */
-            pointer-events: none; 
-            z-index: 5; /* Lowered z-index to stay behind UI when needed */
+            pointer-events: none; /* Initially pass through to buttons */
+            z-index: 50; /* Above UI but passing clicks */
         }
 
         .container {
-            max-width: 600px;
+            max-width: 500px;
             width: 90%;
-            margin: 30px auto;
+            margin: 20px auto;
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.1);
             border-top: 8px solid var(--isr-blue);
             border-bottom: 8px solid var(--usa-red);
             position: relative;
-            z-index: 20; /* Keep UI above canvas */
+            z-index: 10; /* Lower than canvas but functional */
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
-        h1 { font-size: 2.2rem; text-align: center; color: var(--usa-blue); margin-bottom: 10px; }
-        .subtitle { text-align: center; font-weight: bold; margin-bottom: 25px; font-size: 1rem; line-height: 1.5; }
+        h1 { font-size: 1.8rem; text-align: center; color: var(--usa-blue); margin-bottom: 10px; }
+        .subtitle { text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4; }
 
         .btn {
             display: block;
@@ -63,57 +64,53 @@
             margin: 8px 0;
             border: 3px solid var(--isr-blue);
             background: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 900;
             cursor: pointer;
             border-radius: 50px;
             transition: 0.3s;
             text-align: center;
-            position: relative;
-            z-index: 30; /* Ensure buttons are clickable */
-            pointer-events: auto;
         }
-        .btn:hover { background: var(--isr-blue); color: white; transform: scale(1.02); }
+        .btn:hover { background: var(--isr-blue); color: white; }
         .btn.unlocked { border-color: #2ecc71; background: #e8f8f0; }
 
-        .quiz-header { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .question-text { font-size: 1.2rem; margin-bottom: 20px; color: var(--usa-blue); }
+        .quiz-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .question-text { font-size: 1.1rem; margin-bottom: 15px; color: var(--usa-blue); }
 
         .option-label {
             display: block;
-            padding: 12px;
+            padding: 10px;
             border: 2px solid #ddd;
             margin-bottom: 8px;
             border-radius: 10px;
             cursor: pointer;
             transition: 0.2s;
-            pointer-events: auto;
         }
         .option-label:hover { border-color: var(--usa-red); background: #fff5f5; }
 
         input[type="number"] {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border-radius: 10px;
             border: 2px solid #ddd;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .error-msg {
             color: var(--usa-red);
             text-align: center;
-            margin-top: 15px;
+            margin-top: 10px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .message-box {
-            padding: 15px;
+            padding: 12px;
             background: #f9f9f9;
             border-right: 5px solid var(--isr-blue);
             border-left: 5px solid var(--usa-red);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-size: 1rem;
             direction: auto;
         }
 
@@ -126,12 +123,6 @@
         .hidden { display: none !important; }
 
         #hidden-assets { display: none; }
-
-        /* Mobile specific adjustments */
-        @media (max-width: 480px) {
-            h1 { font-size: 1.8rem; }
-            .container { margin: 15px auto; padding: 20px; }
-        }
     </style>
 </head>
 <body>
@@ -173,7 +164,7 @@
 
     <!-- MESSAGES SECTION -->
     <div id="content-messages" class="container hidden">
-        <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.9rem; width:auto; display:inline;">← Return</button>
+        <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.8rem; width:auto; display:inline;">← Return</button>
         <h2>The 7 Scrolls</h2>
         <div class="message-box">Happy Birthday! أتمنى لك سنة سعيدة مليئة بالنجاح.</div>
         <div class="message-box">You are the best! استمر في كونك أسطورياً.</div>
@@ -186,7 +177,7 @@
 
     <!-- VIDEOS SECTION -->
     <div id="content-videos" class="container hidden">
-        <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.9rem; width:auto; display:inline;">← Return</button>
+        <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.8rem; width:auto; display:inline;">← Return</button>
         <h2>Visual Intel</h2>
         <div class="media-box">
             <video controls src="video1.mp4"></video>
@@ -200,7 +191,7 @@
 
     <!-- DRAWINGS SECTION -->
     <div id="content-drawings" class="container hidden">
-        <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.9rem; width:auto; display:inline;">← Return</button>
+        <button onclick="goHome()" class="btn" style="border:none; text-decoration:underline; font-size:0.8rem; width:auto; display:inline;">← Return</button>
         <h2>Artistic Evidence</h2>
         <div class="media-box"><img src="drawing1.jpg"><p>Sketch A</p></div>
         <div class="media-box"><img src="drawing2.jpg"><p>Sketch B</p></div>
@@ -340,16 +331,15 @@
             [mainMenu, quizCont, ...document.querySelectorAll('[id^="content-"]')].forEach(el => el.classList.add('hidden'));
         }
 
-        // --- OPTIMIZED PHYSICS ENGINE ---
+        // --- ENHANCED PHYSICS ENGINE (FIXED INTERACTION) ---
         window.onload = function() {
-            const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint } = Matter;
+            const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Query } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
             
-            // Adjust sizes for mobile vs desktop
             const isMobile = window.innerWidth < 480;
-            const chibiRadius = isMobile ? 35 : 45; // Much smaller
-            const chibiScale = isMobile ? 0.35 : 0.45; // Scaled down
+            const chibiRadius = isMobile ? 30 : 40; 
+            const chibiScale = isMobile ? 0.3 : 0.4;
 
             const render = Render.create({
                 canvas: canvas,
@@ -358,8 +348,7 @@
                     width: window.innerWidth,
                     height: window.innerHeight,
                     wireframes: false,
-                    background: 'transparent',
-                    pixelRatio: window.devicePixelRatio
+                    background: 'transparent'
                 }
             });
 
@@ -373,7 +362,7 @@
             const createChibi = (x, y, imgId) => {
                 const imgElement = document.getElementById(imgId);
                 return Bodies.circle(x, y, chibiRadius, {
-                    restitution: 0.5,
+                    restitution: 0.6,
                     friction: 0.1,
                     render: {
                         sprite: {
@@ -386,9 +375,9 @@
             };
 
             const chibis = [
-                createChibi(window.innerWidth * 0.3, 50, 'chibi1'),
+                createChibi(window.innerWidth * 0.2, 50, 'chibi1'),
                 createChibi(window.innerWidth * 0.5, 50, 'chibi2'),
-                createChibi(window.innerWidth * 0.7, 50, 'chibi3')
+                createChibi(window.innerWidth * 0.8, 50, 'chibi3')
             ];
             Composite.add(engine.world, chibis);
 
@@ -397,19 +386,38 @@
                 mouse: mouse,
                 constraint: { stiffness: 0.2, render: { visible: false } }
             });
+            Composite.add(engine.world, mouseConstraint);
 
-            // CRITICAL FIX: Allow clicking buttons by only capturing mouse if body is found
-            canvas.style.pointerEvents = 'none';
-            Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
-                if (mouseConstraint.body) {
-                    canvas.style.pointerEvents = 'auto';
+            // INTELLIGENT LAYER SWITCHING
+            // We listen to the mouse/touch position. 
+            // If the user presses down over a chibi, we enable canvas clicks.
+            // If they click empty space, we let it pass through to buttons.
+
+            const handleInteractionStart = (e) => {
+                const pos = mouse.position;
+                const hit = Query.point(chibis, pos);
+                if (hit.length > 0) {
+                    canvas.style.pointerEvents = 'auto'; // Capture for dragging
+                } else {
+                    canvas.style.pointerEvents = 'none'; // Pass through to buttons
                 }
-            });
-            Matter.Events.on(mouseConstraint, 'mouseup', function(event) {
+            };
+
+            window.addEventListener('mousedown', handleInteractionStart);
+            window.addEventListener('touchstart', (e) => {
+                // Update matter mouse position manually for touch before checking
+                const touch = e.touches[0];
+                mouse.position.x = touch.clientX;
+                mouse.position.y = touch.clientY;
+                handleInteractionStart(e);
+            }, { passive: false });
+
+            window.addEventListener('mouseup', () => {
                 canvas.style.pointerEvents = 'none';
             });
-
-            Composite.add(engine.world, mouseConstraint);
+            window.addEventListener('touchend', () => {
+                canvas.style.pointerEvents = 'none';
+            });
 
             Render.run(render);
             const runner = Runner.create();
