@@ -97,6 +97,9 @@
             clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%);
             animation: pop 0.3s ease-out;
             color: black;
+            unicode-bidi: plaintext;
+            text-align: left;
+            white-space: pre-wrap; /* عشان يحترم السطور الجديدة \n */
         }
 
         .msg-left {
@@ -163,26 +166,26 @@
         .btn:active { background: var(--p5-red); }
         .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 2px solid var(--p5-red); }
 
-    .media-box {
-    margin: 20px 0;
-    border: 4px solid black;
-    box-shadow: 8px 8px 0px var(--p5-red);
-    background: #000;
-    width: 100%;
-}
+        .media-box {
+            margin: 20px 0;
+            border: 4px solid black;
+            box-shadow: 8px 8px 0px var(--p5-red);
+            background: #000;
+            width: 100%;
+        }
 
-.media-box img { 
-    display: block;
-    width: 100%; 
-    height: auto; 
-}
+        .media-box img { 
+            display: block;
+            width: 100%; 
+            height: auto; 
+        }
 
-.media-box iframe {
-    width: 100%;
-    aspect-ratio: 16 / 9; 
-    border: none;
-    display: block;
-}
+        .media-box iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9; 
+            border: none;
+            display: block;
+        }
 
         .option-btn {
             background: white;
@@ -256,7 +259,6 @@
     <div class="gif-bg"></div>
     <canvas id="chibi-canvas"></canvas>
 
-    <!-- Audios -->
     <audio id="audio-bgm" loop><source src="bgm.mp3" type="audio/mpeg"></audio>
     <audio id="audio-correct"><source src="correct.mp3" type="audio/mpeg"></audio>
     <audio id="audio-wrong"><source src="wrong.mp3" type="audio/mpeg"></audio>
@@ -266,7 +268,6 @@
 
     <div id="mute-btn" onclick="toggleMute()">🔊</div>
 
-    <!-- Trump Modal -->
     <div id="trump-modal" class="hidden" onclick="closeTrump()">
         <div style="background:var(--p5-red); padding:40px; text-align:center; border:5px solid white; transform:rotate(-2deg); box-shadow: 15px 15px 0 black;">
             <h2 style="font-size:3rem;">WRONG!</h2>
@@ -275,7 +276,6 @@
         </div>
     </div>
 
-    <!-- Hint Modal -->
     <div id="hint-modal" class="hidden" onclick="this.classList.add('hidden')">
         <div style="background:var(--p5-blue); padding:20px; text-align:center; border:5px solid white; box-shadow: 10px 10px 0 black; max-width: 90%;">
             <h3 style="margin-bottom:10px;">HINT</h3>
@@ -285,7 +285,6 @@
         </div>
     </div>
 
-    <!-- Geet Success Modal (Only used for Master Code now, or as a brief flash) -->
     <div id="geet-modal" class="hidden" onclick="this.classList.add('hidden')">
         <div style="background:var(--p5-red); padding:15px; text-align:center; border:5px solid white; box-shadow: 15px 15px 0 black; max-width: 90%;">
             <img src="geet.jpg" onerror="this.src='https://via.placeholder.com/400x400?text=Geet+Image'" style="max-width: 100%; border: 2px solid black; display: block;">
@@ -296,7 +295,6 @@
 
     <div id="app-container" class="container">
         
-        <!-- Main Menu -->
         <div id="main-menu" class="p5-card">
             <h1>GIFT ROYAL</h1>
             <p style="font-size: 0.8rem; font-weight: 900; margin-bottom: 15px;">STEAL YOUR GIFT</p>
@@ -316,12 +314,9 @@
             </div>
         </div>
 
-        <!-- Quiz Container -->
         <div id="quiz-container" class="p5-card hidden" style="background: black; color: white; border-color: white;">
             <div id="question-text" style="font-size:1rem; margin-bottom:15px; font-weight:900;">TRIAL...</div>
-            
             <div id="quiz-content-area"></div>
-
             <div style="display: flex; gap: 10px;">
                 <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:20px; flex: 2;" onclick="submitAnswer()">EXECUTE</button>
                 <button class="btn" style="background:var(--p5-blue); text-align:center; padding-left:0; margin-top:20px; flex: 1;" onclick="showHint()">HINT</button>
@@ -329,14 +324,12 @@
             <button class="btn" style="background:white; color:black; text-align:center; padding-left:0;" onclick="goHome()">RETREAT</button>
         </div>
 
-        <!-- Content: Messages -->
         <div id="content-messages" class="im-container hidden">
             <div class="im-header">PHANTOM CHAT</div>
             <div class="im-body" id="chat-flow"></div>
             <button class="btn" onclick="goHome()" style="margin:10px; background:var(--p5-red); text-align:center; padding-left:0;">BACK TO MENU</button>
         </div>
 
-        <!-- Content: Gallery -->
         <div id="content-gallery" class="p5-card hidden">
             <h2 id="gallery-title" style="font-size:1.1rem; margin-bottom:15px;">GALLERY</h2>
             <div id="gallery-items" style="max-height: 55vh; overflow-y:auto;"></div>
@@ -364,7 +357,6 @@
             else { bgm.muted = true; btn.innerText = "🔇"; }
         }
 
-        // --- Question Banks (15 Questions Each) ---
         const banks = {
             messages: [
                 { type: "choice", q: "P5: Who is the first party member you meet?", options: ["Ryuji", "Ann", "Morgana", "Yusuke"], answer: "Ryuji", hint: "A loud-mouthed student with dyed blonde hair." },
@@ -504,7 +496,6 @@
                 if(currentIdx >= 15) {
                     playSound('audio-clear');
                     unlocked[currentSection] = true;
-                    // Directly open the content instead of just showing a success modal
                     openContent(currentSection); 
                 } else renderQ();
             } else {
@@ -519,17 +510,16 @@
             const flow = document.getElementById('chat-flow');
             flow.innerHTML = '';
             const msgs = [
-    { s: "Phantom Thief", m: "2NZL A FEEVEEE YOU'RE THE COOLEST PERSON TO EVER EXIST HAVE A GREAT BDAY TODAY!!!!🩷" },
-    { s: "Phantom Thief", m: "كل سنة وانت طيب يا خمسة يارب تكون مبسوط بعيد ميلادك الفشيخ ده احنا حاولنا نخليلك عيد ميلادك ده يكون عكس اللي فات بقدر المستطاع واتمنى نكون نجحنا\n\nاحب اعتذرلك على اي مرة ضايقتك فيها حتى لو كانت صغيرة وعايزك تعرف اني مسامحك برضو على اي حاجة عملتها وضايقتني واتمنى تكون مبسوط ومستمتع دلوقتي" },
-    { s: "Phantom Thief", m: "مساء الخير استاذ d ابقا باصي البتاع ده للولد خمسة\nكل سنة و انت طيب يا خمسة يا اخويا\nربنا يهديك ويصلح حالك وتبطل عبط و شذوذ و تبدأ تفكر ف رحلة الself discovery من ناحية الfurrsona بتاعتك او عدم تقبلك لكونك non binary transgender transracial Indian black woman\nو تفرحنا بيك او ايًا يكن تحياتي\nIf you read it no you didn’t cause u didn’t" },
-    { s: "Phantom Thief", m: "momken tktblo tb mda gamed da 3amatan" },
-    { s: "Phantom Thief", m: "عيد سعيد عليك يا اخو البحته يا توب جلوبال اتشالنجر كاتا يا محب إسرائيل و نتنياهو (تحياتي)👏 💥 🔫 🇺🇲 🇮🇱" },
-    { s: "Phantom Thief", m: "كل سنة وانت طيب انت من اعز الاصدقاء عندي fr واتمني ربنا يباركلك فكل خطوات حياتك" },
-    { s: "Phantom Thief", m: "يسطا فخادك كبيرة فشخ نفسي المس ممكن" },
-    { s: "Phantom Thief", m: "عيل خول" }
-];
-];
+                { s: "Phantom Thief", m: "2NZL A FEEVEEE YOU'RE THE COOLEST PERSON TO EVER EXIST HAVE A GREAT BDAY TODAY!!!!🩷" },
+                { s: "Phantom Thief", m: "كل سنة وانت طيب يا خمسة يارب تكون مبسوط بعيد ميلادك الفشيخ ده احنا حاولنا نخليلك عيد ميلادك ده يكون عكس اللي فات بقدر المستطاع واتمنى نكون نجحنا\n\nاحب اعتذرلك على اي مرة ضايقتك فيها حتى لو كانت صغيرة وعايزك تعرف اني مسامحك برضو على اي حاجة عملتها وضايقتني واتمنى تكون مبسوط ومستمتع دلوقتي" },
+                { s: "Phantom Thief", m: "مساء الخير استاذ d ابقا باصي البتاع ده للولد خمسة\nكل سنة و انت طيب يا خمسة يا اخويا\nربنا يهديك ويصلح حالك وتبطل عبط و شذوذ و تبدأ تفكر ف رحلة الself discovery من ناحية الfurrsona بتاعتك او عدم تقبلك لكونك non binary transgender transracial Indian black woman\nو تفرحنا بيك او ايًا يكن تحياتي\nIf you read it no you didn’t cause u didn’t" },
+                { s: "Phantom Thief", m: "momken tktblo tb mda gamed da 3amatan" },
+                { s: "Phantom Thief", m: "عيد سعيد عليك يا اخو البحته يا توب جلوبال اتشالنجر كاتا يا محب إسرائيل و نتنياهو (تحياتي)👏 💥 🔫 🇺🇲 🇮🇱" },
+                { s: "Phantom Thief", m: "كل سنة وانت طيب انت من اعز الاصدقاء عندي fr واتمني ربنا يباركلك فكل خطوات حياتك" },
+                { s: "Phantom Thief", m: "يسطا فخادك كبيرة فشخ نفسي المس ممكن" },
+                { s: "Phantom Thief", m: "عيل خول" }
             ];
+
             msgs.forEach((msg, i) => {
                 setTimeout(() => {
                     flow.innerHTML += `<div class="msg-bubble msg-left"><span class="msg-sender">${msg.s}</span>${msg.m}</div>`;
@@ -548,15 +538,12 @@
             
             if(s === 'videos') {
                 title.innerText = "RESTORED MEMORIES (PHOTOS)";
-                // Replace with your actual image URLs
                 items.innerHTML = `
                     <div class="media-box"><img src="https://media.discordapp.net/attachments/1283145352232570912/1481259974188601434/20260306_152545.jpg?ex=69b941da&is=69b7f05a&hm=023f012f21bf864ab56c5433f34c92a42b499210ec76bc3ae55cf07afb242f42&=&format=webp&width=419&height=929" alt="Memory 1"></div>
                     <div class="media-box"><img src="https://via.placeholder.com/600x400?text=Memory+Photo+2" alt="Memory 2"></div>
                 `;
             } else {
                 title.innerText = "GALLERY OF THIEVES (YOUTUBE)";
-                // Using YouTube embed code for stability
-                // Replace "VIDEO_ID" with actual IDs (e.g., dQw4w9WgXcQ)
                 const videoIds = ["dQw4w9WgXcQ", "dQw4w9WgXcQ"]; 
                 videoIds.forEach(id => {
                     items.innerHTML += `
@@ -576,7 +563,8 @@
 
         function hideAll() {
             ['main-menu', 'quiz-container', 'content-messages', 'content-gallery'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
             });
         }
 
