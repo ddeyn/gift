@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Steal UR GIFT NIGG-</title>
+    <title>Take Your Heart</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,6 @@
             align-items: center;
         }
 
-        /* GIF Background */
         .gif-bg {
             position: fixed;
             top: 0; left: 0;
@@ -58,7 +57,6 @@
             z-index: 10;
         }
 
-        /* Classic Chat Container */
         .im-container {
             background: #111;
             border: 4px solid var(--p5-white);
@@ -90,7 +88,6 @@
             background: #1a1a1a;
         }
 
-        /* Chat Bubbles */
         .msg-bubble {
             max-width: 85%;
             padding: 12px 15px;
@@ -122,7 +119,6 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* UI Cards */
         .p5-card {
             background: var(--p5-white);
             color: var(--p5-black);
@@ -165,7 +161,6 @@
         .btn:active { background: var(--p5-red); }
         .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 2px solid var(--p5-red); }
 
-        /* Media Box */
         .media-box {
             margin: 20px 0;
             border: 4px solid black;
@@ -180,7 +175,6 @@
             object-fit: contain;
         }
 
-        /* Quiz UI */
         .option-btn {
             background: white;
             color: black;
@@ -216,7 +210,7 @@
             display: inline-block;
         }
 
-        #trump-modal {
+        #trump-modal, #geet-modal, #hint-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
@@ -226,7 +220,6 @@
             justify-content: center;
         }
 
-        /* Mute Button */
         #mute-btn {
             position: fixed;
             bottom: 20px;
@@ -254,29 +247,45 @@
     <div class="gif-bg"></div>
     <canvas id="chibi-canvas"></canvas>
 
-    <!-- Audio Elements -->
-    <audio id="audio-bgm" loop><source src="bgm.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-bgm" loop autoplay><source src="bgm.mp3" type="audio/mpeg"></audio>
     <audio id="audio-correct"><source src="correct.mp3" type="audio/mpeg"></audio>
     <audio id="audio-wrong"><source src="wrong.mp3" type="audio/mpeg"></audio>
     <audio id="audio-clear"><source src="stage_clear.mp3" type="audio/mpeg"></audio>
     <audio id="audio-code-ok"><source src="code_success.mp3" type="audio/mpeg"></audio>
     <audio id="audio-code-fail"><source src="code_fail.mp3" type="audio/mpeg"></audio>
 
-    <!-- Mute Control -->
     <div id="mute-btn" onclick="toggleMute()">🔊</div>
 
     <!-- Trump Modal -->
     <div id="trump-modal" class="hidden" onclick="closeTrump()">
         <div style="background:var(--p5-red); padding:40px; text-align:center; border:5px solid white; transform:rotate(-2deg); box-shadow: 15px 15px 0 black;">
             <h2 style="font-size:3rem;">WRONG!</h2>
-            <p style="margin:20px 0; font-weight: bold;">YOUR TRUMP WILL 🍇 YOU</p>
+            <p style="margin:20px 0; font-weight: bold;">YOUR TRUMP WILL CRUSH YOU</p>
             <button class="btn" style="text-align:center; padding-left:0; background: black;">I UNDERSTAND</button>
+        </div>
+    </div>
+
+    <!-- Hint Modal -->
+    <div id="hint-modal" class="hidden" onclick="this.classList.add('hidden')">
+        <div style="background:var(--p5-blue); padding:20px; text-align:center; border:5px solid white; box-shadow: 10px 10px 0 black; max-width: 90%;">
+            <h3 style="margin-bottom:10px;">HINT</h3>
+            <p id="hint-text" style="font-weight: bold; margin-bottom:15px; color: white;"></p>
+            <img src="hint.jpg" onerror="this.src='https://via.placeholder.com/300x200?text=Hint.jpg+Not+Found'" style="width: 100%; border: 2px solid black;">
+            <p style="font-size:0.7rem; margin-top:10px; color: #ccf;">(Tap anywhere to close)</p>
+        </div>
+    </div>
+
+    <!-- Geet Success Modal -->
+    <div id="geet-modal" class="hidden" onclick="this.classList.add('hidden')">
+        <div style="background:var(--p5-red); padding:15px; text-align:center; border:5px solid white; box-shadow: 15px 15px 0 black; max-width: 90%;">
+            <img src="geet.jpg" onerror="this.src='https://via.placeholder.com/400x400?text=Geet.jpg+Not+Found'" style="max-width: 100%; border: 2px solid black; display: block;">
+            <p style="margin-top:15px; font-weight: bold; font-size: 1.5rem; color: white;">STAGE CLEARED!</p>
+            <p style="font-size: 0.8rem; color: #ffcccc;">(Tap to close)</p>
         </div>
     </div>
 
     <div id="app-container" class="container">
         
-        <!-- Main Menu -->
         <div id="main-menu" class="p5-card">
             <h1>GIFT ROYAL</h1>
             <p style="font-size: 0.8rem; font-weight: 900; margin-bottom: 15px;">STEAL YOUR GIFT</p>
@@ -296,26 +305,24 @@
             </div>
         </div>
 
-        <!-- Hybrid Quiz Container -->
         <div id="quiz-container" class="p5-card hidden" style="background: black; color: white; border-color: white;">
             <div id="question-text" style="font-size:1rem; margin-bottom:15px; font-weight:900;">TRIAL...</div>
             
-            <div id="quiz-content-area">
-                <!-- Question input or options appear here -->
-            </div>
+            <div id="quiz-content-area"></div>
 
-            <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:20px;" onclick="submitAnswer()">EXECUTE</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:20px; flex: 2;" onclick="submitAnswer()">EXECUTE</button>
+                <button class="btn" style="background:var(--p5-blue); text-align:center; padding-left:0; margin-top:20px; flex: 1;" onclick="showHint()">HINT</button>
+            </div>
             <button class="btn" style="background:white; color:black; text-align:center; padding-left:0;" onclick="goHome()">RETREAT</button>
         </div>
 
-        <!-- Classic Chat Messages -->
         <div id="content-messages" class="im-container hidden">
             <div class="im-header">PHANTOM CHAT</div>
             <div class="im-body" id="chat-flow"></div>
             <button class="btn" onclick="goHome()" style="margin:10px; background:var(--p5-red); text-align:center; padding-left:0;">BACK TO MENU</button>
         </div>
 
-        <!-- Gallery -->
         <div id="content-gallery" class="p5-card hidden">
             <h2 id="gallery-title" style="font-size:1.1rem; margin-bottom:15px;">GALLERY</h2>
             <div id="gallery-items" style="max-height: 60vh; overflow-y:auto;"></div>
@@ -326,7 +333,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script>
-        // --- AUDIO ENGINE ---
         const playSound = (id) => {
             const el = document.getElementById(id);
             if(el) { el.currentTime = 0; el.play().catch(() => {}); }
@@ -335,56 +341,80 @@
         function toggleMute() {
             const bgm = document.getElementById('audio-bgm');
             const btn = document.getElementById('mute-btn');
-            if(bgm.muted) {
-                bgm.muted = false; btn.innerText = "🔊";
-            } else {
-                bgm.muted = true; btn.innerText = "🔇";
-            }
+            if(bgm.muted) { bgm.muted = false; btn.innerText = "🔊"; } 
+            else { bgm.muted = true; btn.innerText = "🔇"; }
         }
 
         document.body.addEventListener('click', () => {
             const bgm = document.getElementById('audio-bgm');
-            if(bgm.paused) bgm.play();
+            if(bgm.paused) bgm.play().catch(()=>{});
         }, { once: true });
 
-        // --- DATA ---
-        const quizBank = [
-            { type: "choice", q: "Fata Morgana: Real name of 'The Maid'?", options: ["Giselle", "Maria", "Nellie", "Mell"], answer: "Giselle" },
-            { type: "choice", q: "Persona 5: Morgana's Ultimate Persona?", options: ["Mercurius", "Zorro", "Diego", "Arsene"], answer: "Mercurius" },
-            { type: "choice", q: "Danganronpa: Kyoko's father's name?", options: ["Jin", "Makoto", "Byakuya", "Junko"], answer: "Jin" },
-            { type: "text", q: "Fata Morgana: Year of Door 4? (Numbers only)", answer: "1099" },
-            { type: "choice", q: "Code Geass: Lelouch's natural eye color?", options: ["Violet", "Green", "Red", "Blue"], answer: "Violet" },
-            { type: "choice", q: "Hollow Knight: Pale King's daughter?", options: ["Hornet", "Isma", "Dryya", "Ze'mer"], answer: "Hornet" },
-            { type: "text", q: "Hollow Knight: Starting Masks? (Number)", answer: "5" },
-            { type: "choice", q: "P5: Does Akechi have a Palace?", options: ["No", "Yes", "Only in Royal", "Maybe"], answer: "No" },
-            { type: "choice", q: "Code Geass: Lelouch's organization?", options: ["Black Knights", "Zeroes", "Order of Geass", "Britannia"], answer: "Black Knights" },
-            { type: "text", q: "Danganronpa: Kyoko's seat number?", answer: "6" },
-            { type: "choice", q: "Fata Morgana: Michel's biological sex?", options: ["Female", "Male", "Unknown", "Both"], answer: "Female" },
-            { type: "choice", q: "P5: Is Morgana a cat in the real world?", options: ["Yes", "No"], answer: "Yes" },
-            { type: "choice", q: "Code Geass: Marianne's Knightmare?", options: ["Ganimede", "Gawain", "Lancelot", "Shinkiro"], answer: "Ganimede" },
-            { type: "choice", q: "Hollow Knight: Who is 'God of Gods'?", options: ["Void Given Focus", "Radiance", "Pale King", "Grimm"], answer: "Void Given Focus" },
-            { type: "choice", q: "Code Geass: Favorite strategy game?", options: ["Chess", "Poker", "Shogi", "Go"], answer: "Chess" }
-        ];
-
-        const chatMessages = [
-            { s: "Morgana", m: "Joker! The target is wide open. This heist is personal." },
-            { s: "Ryuji", m: "For real?! Let's go and kick some palace butt!" },
-            { s: "Ann", m: "Everything is ready on my side. Don't be late!" }
-        ];
+        // --- ALL ENGLISH QUIZ BANKS ---
+        const banks = {
+            messages: [
+                { type: "choice", q: "P5: Who is the first party member you meet?", options: ["Ryuji", "Ann", "Morgana", "Yusuke"], answer: "Ryuji", hint: "A loud-mouthed student with dyed blonde hair." },
+                { type: "choice", q: "P5: Joker's starting Persona?", options: ["Arsene", "Zorro", "Captain Kidd", "Carmen"], answer: "Arsene", hint: "A gentleman thief named after a French character." },
+                { type: "text", q: "Fata Morgana: Real name of 'The White-Haired Girl'?", answer: "Giselle", hint: "Her name starts with the letter G." },
+                { type: "choice", q: "Danganronpa: Ultimate Lucky Student (DR1)?", options: ["Makoto", "Nagito", "Hajime", "Kyoko"], answer: "Makoto", hint: "The protagonist of the first game." },
+                { type: "choice", q: "Code Geass: Lelouch's Geass power location?", options: ["Left Eye", "Right Eye", "Hand", "Chest"], answer: "Left Eye", hint: "The eye he usually hides with his hair." },
+                { type: "text", q: "Hollow Knight: The creator of the kingdom?", answer: "Pale King", hint: "The monarch of Hallownest." },
+                { type: "choice", q: "P5: Morgana's catchphrase?", options: ["Looking cool Joker", "Go to sleep", "Steal your heart", "Meow"], answer: "Looking cool Joker", hint: "Something he says when the hero performs well." },
+                { type: "choice", q: "Fata Morgana: The Maid's true role?", options: ["Observer", "Killer", "Lover", "Mother"], answer: "Observer", hint: "She watches the tragedies of the mansion." },
+                { type: "choice", q: "Danganronpa: Who is the mascot?", options: ["Monokuma", "Monomi", "Junko", "Kuma"], answer: "Monokuma", hint: "A half-white, half-black bear." },
+                { type: "text", q: "Code Geass: Lelouch's alias?", answer: "Zero", hint: "A number that represents nothingness." },
+                { type: "choice", q: "Hollow Knight: The main weapon?", options: ["Nail", "Sword", "Spear", "Axe"], answer: "Nail", hint: "A simple, blunt-looking sharp tool." },
+                { type: "choice", q: "P5: Ann Takamaki's Persona?", options: ["Carmen", "Johanna", "Milady", "Necronomicon"], answer: "Carmen", hint: "A woman in a red dress with roses." },
+                { type: "choice", q: "Fata Morgana: The house's type?", options: ["Mansion", "Castle", "Cottage", "Apartment"], answer: "Mansion", hint: "A large, cursed house." },
+                { type: "choice", q: "Danganronpa: Kyoko Kirigiri's talent?", options: ["Detective", "Nurse", "Gamer", "Writer"], answer: "Detective", hint: "She excels at solving mysteries." },
+                { type: "text", q: "Code Geass: CC's favorite food?", answer: "Pizza", hint: "A popular Italian dish she often eats." }
+            ],
+            videos: [
+                { type: "choice", q: "P5: Sae Niijima's Palace theme?", options: ["Casino", "Bank", "Museum", "Space"], answer: "Casino", hint: "A place of gambling and bright lights." },
+                { type: "choice", q: "Fata Morgana: Michel's brother's name?", options: ["Georges", "Didier", "Aimee", "Nellie"], answer: "Georges", hint: "Starts with G, similar to the white-haired girl." },
+                { type: "text", q: "Danganronpa: First victim's name (DR1)?", answer: "Sayaka Maizono", hint: "The Ultimate Pop Sensation." },
+                { type: "choice", q: "Code Geass: Lelouch's sister?", options: ["Nunnally", "Euphemia", "Cornelia", "Shirley"], answer: "Nunnally", hint: "She is blind and uses a wheelchair." },
+                { type: "choice", q: "Hollow Knight: Hornet's weapon?", options: ["Needle", "Nail", "Web", "Spike"], answer: "Needle", hint: "A tool used for sewing." },
+                { type: "text", q: "P5: Shido's representative animal?", answer: "Lion", hint: "The king of the jungle." },
+                { type: "choice", q: "Fata Morgana: Michel's true identity (Sex)?", options: ["Intersex", "Male", "Female", "Unknown"], answer: "Intersex", hint: "A condition involving both biological traits." },
+                { type: "choice", q: "Danganronpa: Mastermind identity?", options: ["Junko Enoshima", "Mukuro", "Monokuma", "Naegi"], answer: "Junko Enoshima", hint: "The Ultimate Fashionista who loves despair." },
+                { type: "choice", q: "Code Geass: The Knightmare frame of Suzaku?", options: ["Lancelot", "Gawain", "Guren", "Mordred"], answer: "Lancelot", hint: "Named after a famous Knight of the Round Table." },
+                { type: "text", q: "Hollow Knight: The final boss in Pantheon 5?", answer: "Absolute Radiance", hint: "The true form of the moth god." },
+                { type: "choice", q: "P5: Futaba's codename?", options: ["Oracle", "Navi", "Alibaba", "Queen"], answer: "Oracle", hint: "A person who provides divine wisdom or navigation." },
+                { type: "choice", q: "Fata Morgana: Door 1 Year?", options: ["1603", "1099", "1860", "1950"], answer: "1603", hint: "The beginning of the 17th century." },
+                { type: "choice", q: "Danganronpa: Who killed Chihiro?", options: ["Mondo", "Leon", "Celeste", "Sakura"], answer: "Mondo", hint: "The leader of a biker gang." },
+                { type: "choice", q: "Code Geass: Suzaku's father?", options: ["Genbu Kururugi", "Lelouch", "Charles", "V.V."], answer: "Genbu Kururugi", hint: "The former Prime Minister of Japan." },
+                { type: "text", q: "Hollow Knight: The shopkeeper's name?", answer: "Sly", hint: "He is small but carries a Greatslash." }
+            ],
+            drawings: [
+                { type: "choice", q: "P5: Final boss of the original game?", options: ["Yaldabaoth", "Maruki", "Shido", "Akechi"], answer: "Yaldabaoth", hint: "The God of Control." },
+                { type: "choice", q: "Fata Morgana: Jacopo's lover in door 3?", options: ["Maria", "Nellie", "Giselle", "Morgana"], answer: "Maria", hint: "A very common name in that era." },
+                { type: "text", q: "Danganronpa: What did Mondo turn into?", answer: "Butter", hint: "Something you spread on bread." },
+                { type: "choice", q: "Code Geass: Who killed Euphemia?", options: ["Lelouch", "Suzaku", "Jeremiah", "Kallen"], answer: "Lelouch", hint: "Her brother, out of tragic necessity." },
+                { type: "choice", q: "Hollow Knight: Where do you find the Abyss?", options: ["Ancient Basin", "Deepnest", "City of Tears", "Crystal Peak"], answer: "Ancient Basin", hint: "The deepest area of the map." },
+                { type: "text", q: "P5: Maruki's Persona (Royal)?", answer: "Adam Kadmon", hint: "The ultimate evolution of Azathoth." },
+                { type: "choice", q: "Fata Morgana: The Lord of the House?", options: ["Michel", "Jacopo", "Mell", "Georges"], answer: "Michel", hint: "The white-haired protagonist." },
+                { type: "choice", q: "Danganronpa: Celeste's real name?", options: ["Taeko Yasuhiro", "Kirigiri", "Asahina", "Mikan"], answer: "Taeko Yasuhiro", hint: "A very plain Japanese name." },
+                { type: "choice", q: "Code Geass: Lelouch's mother?", options: ["Marianne", "C.C.", "V.V.", "Euphemia"], answer: "Marianne", hint: "She was known as 'The Flash'." },
+                { type: "text", q: "Hollow Knight: The number of Grubs?", answer: "46", hint: "Less than 50, more than 40." },
+                { type: "choice", q: "P5: Makoto Niijima's Persona?", options: ["Johanna", "Agnes", "Anat", "Cybelle"], answer: "Johanna", hint: "It looks like a high-speed motorcycle." },
+                { type: "choice", q: "Fata Morgana: Morgana's original form?", options: ["Witch", "Angel", "Spirit", "Demon"], answer: "Witch", hint: "She cursed the mansion inhabitants." },
+                { type: "choice", q: "Danganronpa: Gonta's talent?", options: ["Entomologist", "Butler", "Boxer", "Artist"], answer: "Entomologist", hint: "He is obsessed with bugs." },
+                { type: "choice", q: "Code Geass: Orange's real name?", options: ["Jeremiah Gottwald", "Viletta", "Lloyd", "Cécile"], answer: "Jeremiah Gottwald", hint: "The man with mechanical loyalty." },
+                { type: "text", q: "Hollow Knight: The name of the white lady?", answer: "White Lady", hint: "Her name describes exactly what she is." }
+            ]
+        };
 
         let unlocked = { messages: false, videos: false, drawings: false };
         let currentSection = '';
         let currentIdx = 0;
         let selectedChoice = null;
 
-        // --- LOGIC ---
         function handleSectionClick(s) {
             if(unlocked[s]) {
                 if(s === 'messages') startChat();
                 else showGallery(s);
-            } else {
-                startQuiz(s);
-            }
+            } else { startQuiz(s); }
         }
 
         function startQuiz(s) {
@@ -396,7 +426,7 @@
         }
 
         function renderQ() {
-            const q = quizBank[currentIdx];
+            const q = banks[currentSection][currentIdx];
             document.getElementById('question-text').innerText = `${currentIdx+1}/15: ${q.q}`;
             const area = document.getElementById('quiz-content-area');
             area.innerHTML = '';
@@ -419,15 +449,21 @@
                 input.type = "text";
                 input.id = "quiz-text-input";
                 input.className = "quiz-input";
-                input.placeholder = "ANSWER HERE";
+                input.placeholder = "ENTER YOUR ANSWER";
                 area.appendChild(input);
                 input.focus();
                 input.onkeypress = (e) => { if(e.key === 'Enter') submitAnswer(); };
             }
         }
 
+        function showHint() {
+            const q = banks[currentSection][currentIdx];
+            document.getElementById('hint-text').innerText = q.hint;
+            document.getElementById('hint-modal').classList.remove('hidden');
+        }
+
         function submitAnswer() {
-            const q = quizBank[currentIdx];
+            const q = banks[currentSection][currentIdx];
             let ans = "";
             if(q.type === "choice") ans = selectedChoice;
             else ans = document.getElementById('quiz-text-input').value.trim();
@@ -440,6 +476,7 @@
                 if(currentIdx >= 15) {
                     playSound('audio-clear');
                     unlocked[currentSection] = true;
+                    document.getElementById('geet-modal').classList.remove('hidden');
                     goHome();
                 } else renderQ();
             } else {
@@ -453,14 +490,14 @@
             document.getElementById('content-messages').classList.remove('hidden');
             const flow = document.getElementById('chat-flow');
             flow.innerHTML = '';
-            chatMessages.forEach((msg, i) => {
+            const msgs = [
+                { s: "Morgana", m: "Joker! The target is wide open." },
+                { s: "Ryuji", m: "For real?! Let's go!" },
+                { s: "Ann", m: "Ready when you are!" }
+            ];
+            msgs.forEach((msg, i) => {
                 setTimeout(() => {
-                    flow.innerHTML += `
-                        <div class="msg-bubble msg-left">
-                            <span class="msg-sender">${msg.s}</span>
-                            ${msg.m}
-                        </div>
-                    `;
+                    flow.innerHTML += `<div class="msg-bubble msg-left"><span class="msg-sender">${msg.s}</span>${msg.m}</div>`;
                     flow.scrollTop = flow.scrollHeight;
                 }, i * 700);
             });
@@ -475,22 +512,16 @@
             items.innerHTML = '';
             
             if(s === 'videos') {
-                title.innerText = "RESTORED MEMORIES";
-                // Fixed media paths
+                title.innerText = "RESTORED MEMORIES (PHOTOS)";
                 items.innerHTML = `
-                    <div class="media-box">
-                        <video controls poster="photo1.jpg">
-                            <source src="video1.mp4" type="video/mp4">
-                            Your browser does not support videos.
-                        </video>
-                    </div>
-                    <div class="media-box"><img src="photo1.jpg" onerror="this.src='https://via.placeholder.com/400x300?text=Photo1.jpg+Not+Found'"></div>
+                    <div class="media-box"><img src="photo1.jpg" onerror="this.src='https://via.placeholder.com/400x300?text=Photo1.jpg'"></div>
+                    <div class="media-box"><img src="photo2.jpg" onerror="this.src='https://via.placeholder.com/400x300?text=Photo2.jpg'"></div>
                 `;
             } else {
-                title.innerText = "GALLERY OF THIEVES";
+                title.innerText = "GALLERY OF THIEVES (VIDEOS)";
                 items.innerHTML = `
-                    <div class="media-box"><img src="drawing1.jpg" onerror="this.src='https://via.placeholder.com/400x500?text=Drawing1.jpg+Not+Found'"></div>
-                    <div class="media-box"><img src="drawing2.jpg" onerror="this.src='https://via.placeholder.com/400x500?text=Drawing2.jpg+Not+Found'"></div>
+                    <div class="media-box"><video controls><source src="video1.mp4" type="video/mp4"></video></div>
+                    <div class="media-box"><video controls><source src="video2.mp4" type="video/mp4"></video></div>
                 `;
             }
         }
@@ -518,15 +549,15 @@
                 playSound('audio-code-ok');
                 unlocked = { messages: true, videos: true, drawings: true };
                 goHome();
-            } else {
-                playSound('audio-code-fail');
-            }
+            } else { playSound('audio-code-fail'); }
         }
 
         function closeTrump() { document.getElementById('trump-modal').classList.add('hidden'); }
 
-        // --- PHYSICS ---
         window.onload = () => {
+            const bgm = document.getElementById('audio-bgm');
+            bgm.play().catch(()=>{});
+
             const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
