@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>5Pigo</title>
+    <title>Persona 5 Royal - Take Your Heart</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
             align-items: center;
         }
 
-        /* New GIF Background */
+        /* GIF Background */
         .gif-bg {
             position: fixed;
             top: 0; left: 0;
@@ -165,7 +165,7 @@
         .btn:active { background: var(--p5-red); }
         .btn.unlocked { background: var(--p5-white); color: var(--p5-red); border: 2px solid var(--p5-red); }
 
-        /* Larger Gallery Items */
+        /* Media Box */
         .media-box {
             margin: 20px 0;
             border: 4px solid black;
@@ -176,8 +176,35 @@
         .media-box img, .media-box video { 
             width: 100%; 
             display: block; 
-            max-height: 500px; /*  */
+            max-height: 500px;
             object-fit: contain;
+        }
+
+        /* Quiz UI */
+        .option-btn {
+            background: white;
+            color: black;
+            border: 2px solid black;
+            padding: 10px;
+            margin-bottom: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: 0.2s;
+        }
+        .option-btn.selected { background: var(--p5-red); color: white; border-color: white; }
+
+        .quiz-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid var(--p5-red);
+            font-family: inherit;
+            font-weight: 900;
+            text-transform: uppercase;
+            outline: none;
+            background: #eee;
         }
 
         .code-reveal {
@@ -199,6 +226,26 @@
             justify-content: center;
         }
 
+        /* Mute Button */
+        #mute-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--p5-red);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2000;
+            font-weight: bold;
+            box-shadow: 0 0 10px black;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -207,22 +254,32 @@
     <div class="gif-bg"></div>
     <canvas id="chibi-canvas"></canvas>
 
+    <!-- Audio Elements -->
+    <audio id="audio-bgm" loop><source src="bgm.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-correct"><source src="correct.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-wrong"><source src="wrong.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-clear"><source src="stage_clear.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-code-ok"><source src="code_success.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-code-fail"><source src="code_fail.mp3" type="audio/mpeg"></audio>
+
+    <!-- Mute Control -->
+    <div id="mute-btn" onclick="toggleMute()">🔊</div>
+
     <!-- Trump Modal -->
     <div id="trump-modal" class="hidden" onclick="closeTrump()">
         <div style="background:var(--p5-red); padding:40px; text-align:center; border:5px solid white; transform:rotate(-2deg); box-shadow: 15px 15px 0 black;">
             <h2 style="font-size:3rem;">WRONG!</h2>
-            <p style="margin:20px 0; font-weight: bold;"> TRUMP WILL 🍇 YOU</p>
+            <p style="margin:20px 0; font-weight: bold;">YOUR TRUMP WILL 🍇 YOU</p>
             <button class="btn" style="text-align:center; padding-left:0; background: black;">I UNDERSTAND</button>
         </div>
     </div>
 
-    <!-- Main App Layout -->
     <div id="app-container" class="container">
         
         <!-- Main Menu -->
         <div id="main-menu" class="p5-card">
-            <h1>GIFT ROYAL</h1>
-            <p style="font-size: 0.8rem; font-weight: 900; margin-bottom: 15px;">STEAL YOUR GIFT</p>
+            <h1>ROYAL</h1>
+            <p style="font-size: 0.8rem; font-weight: 900; margin-bottom: 15px;">STEAL HER HEART</p>
             
             <div id="reveal-1" class="code-reveal hidden">KEY 1: 11---</div>
             <button class="btn" id="btn-messages" onclick="handleSectionClick('messages')">PHANTOM CALLS</button>
@@ -239,24 +296,26 @@
             </div>
         </div>
 
-        <!-- Quiz Container -->
+        <!-- Hybrid Quiz Container -->
         <div id="quiz-container" class="p5-card hidden" style="background: black; color: white; border-color: white;">
             <div id="question-text" style="font-size:1rem; margin-bottom:15px; font-weight:900;">TRIAL...</div>
-            <div id="options-container"></div>
-            <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0;" onclick="submitAnswer()">EXECUTE</button>
+            
+            <div id="quiz-content-area">
+                <!-- Question input or options appear here -->
+            </div>
+
+            <button class="btn" style="background:var(--p5-red); text-align:center; padding-left:0; margin-top:20px;" onclick="submitAnswer()">EXECUTE</button>
             <button class="btn" style="background:white; color:black; text-align:center; padding-left:0;" onclick="goHome()">RETREAT</button>
         </div>
 
         <!-- Classic Chat Messages -->
         <div id="content-messages" class="im-container hidden">
             <div class="im-header">PHANTOM CHAT</div>
-            <div class="im-body" id="chat-flow">
-                <!-- Messages will appear here -->
-            </div>
+            <div class="im-body" id="chat-flow"></div>
             <button class="btn" onclick="goHome()" style="margin:10px; background:var(--p5-red); text-align:center; padding-left:0;">BACK TO MENU</button>
         </div>
 
-        <!-- Video/Photo Gallery (Larger Display) -->
+        <!-- Gallery -->
         <div id="content-gallery" class="p5-card hidden">
             <h2 id="gallery-title" style="font-size:1.1rem; margin-bottom:15px;">GALLERY</h2>
             <div id="gallery-items" style="max-height: 60vh; overflow-y:auto;"></div>
@@ -267,38 +326,58 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script>
+        // --- AUDIO ENGINE ---
+        const playSound = (id) => {
+            const el = document.getElementById(id);
+            if(el) { el.currentTime = 0; el.play().catch(() => {}); }
+        };
+
+        function toggleMute() {
+            const bgm = document.getElementById('audio-bgm');
+            const btn = document.getElementById('mute-btn');
+            if(bgm.muted) {
+                bgm.muted = false; btn.innerText = "🔊";
+            } else {
+                bgm.muted = true; btn.innerText = "🔇";
+            }
+        }
+
+        document.body.addEventListener('click', () => {
+            const bgm = document.getElementById('audio-bgm');
+            if(bgm.paused) bgm.play();
+        }, { once: true });
+
+        // --- DATA ---
         const quizBank = [
-            { q: "Fata Morgana: Real name of 'The Maid'?", options: ["Giselle", "Maria", "Nellie", "Mell"], answer: "Giselle" },
-            { q: "Persona 5: Morgana's Ultimate Persona?", options: ["Mercurius", "Zorro", "Diego", "Arsene"], answer: "Mercurius" },
-            { q: "Danganronpa: Kyoko's father's name?", options: ["Jin", "Makoto", "Byakuya", "Junko"], answer: "Jin" },
-            { q: "Code Geass: Lelouch's natural eye color?", options: ["Violet", "Green", "Red", "Blue"], answer: "Violet" },
-            { q: "Hollow Knight: Pale King's daughter?", options: ["Hornet", "Isma", "Dryya", "Ze'mer"], answer: "Hornet" },
-            { q: "Fata Morgana: Year of Door 4?", options: ["1099", "1200", "1450", "1066"], answer: "1099" },
-            { q: "P5: Does Akechi have a Palace?", options: ["None", "Casino", "Museum", "Lab"], answer: "None" },
-            { q: "Code Geass: Lelouch's organization?", options: ["Black Knights", "Zeroes", "Order of Geass", "Britannia"], answer: "Black Knights" },
-            { q: "Hollow Knight: Starting Masks?", options: ["5", "4", "6", "9"], answer: "5" },
-            { q: "Danganronpa: Kyoko's seat number?", options: ["6", "1", "15", "10"], answer: "6" },
-            { q: "Fata Morgana: Michel's biological sex?", options: ["Female", "Male", "Unknown", "Both"], answer: "Female" },
-            { q: "P5: Is Morgana a cat in the real world?", options: ["True", "False", "Maybe", "Only at night"], answer: "True" },
-            { q: "Code Geass: Marianne's Knightmare?", options: ["Ganimede", "Gawain", "Lancelot", "Shinkiro"], answer: "Ganimede" },
-            { q: "Hollow Knight: Who is 'God of Gods'?", options: ["Void Given Focus", "Radiance", "Pale King", "Grimm"], answer: "Void Given Focus" },
-            { q: "Code Geass: Favorite strategy game?", options: ["Chess", "Poker", "Shogi", "Go"], answer: "Chess" }
+            { type: "choice", q: "Fata Morgana: Real name of 'The Maid'?", options: ["Giselle", "Maria", "Nellie", "Mell"], answer: "Giselle" },
+            { type: "choice", q: "Persona 5: Morgana's Ultimate Persona?", options: ["Mercurius", "Zorro", "Diego", "Arsene"], answer: "Mercurius" },
+            { type: "choice", q: "Danganronpa: Kyoko's father's name?", options: ["Jin", "Makoto", "Byakuya", "Junko"], answer: "Jin" },
+            { type: "text", q: "Fata Morgana: Year of Door 4? (Numbers only)", answer: "1099" },
+            { type: "choice", q: "Code Geass: Lelouch's natural eye color?", options: ["Violet", "Green", "Red", "Blue"], answer: "Violet" },
+            { type: "choice", q: "Hollow Knight: Pale King's daughter?", options: ["Hornet", "Isma", "Dryya", "Ze'mer"], answer: "Hornet" },
+            { type: "text", q: "Hollow Knight: Starting Masks? (Number)", answer: "5" },
+            { type: "choice", q: "P5: Does Akechi have a Palace?", options: ["No", "Yes", "Only in Royal", "Maybe"], answer: "No" },
+            { type: "choice", q: "Code Geass: Lelouch's organization?", options: ["Black Knights", "Zeroes", "Order of Geass", "Britannia"], answer: "Black Knights" },
+            { type: "text", q: "Danganronpa: Kyoko's seat number?", answer: "6" },
+            { type: "choice", q: "Fata Morgana: Michel's biological sex?", options: ["Female", "Male", "Unknown", "Both"], answer: "Female" },
+            { type: "choice", q: "P5: Is Morgana a cat in the real world?", options: ["Yes", "No"], answer: "Yes" },
+            { type: "choice", q: "Code Geass: Marianne's Knightmare?", options: ["Ganimede", "Gawain", "Lancelot", "Shinkiro"], answer: "Ganimede" },
+            { type: "choice", q: "Hollow Knight: Who is 'God of Gods'?", options: ["Void Given Focus", "Radiance", "Pale King", "Grimm"], answer: "Void Given Focus" },
+            { type: "choice", q: "Code Geass: Favorite strategy game?", options: ["Chess", "Poker", "Shogi", "Go"], answer: "Chess" }
         ];
 
         const chatMessages = [
-            { s: "Morgana", m: "عيد سعيد عليك يا اخو البحته يا توب جلوبال اتشالنجر كاتا يا محب إسرائيل و نتنياهو (تحياتي)👏 💥 🔫 🇺🇲 🇮🇱." },
+            { s: "Morgana", m: "Joker! The target is wide open. This heist is personal." },
             { s: "Ryuji", m: "For real?! Let's go and kick some palace butt!" },
-            { s: "Ann", m: "Everything is ready on my side. Don't be late!" },
-            { s: "Yusuke", m: "I've captured the aesthetic of our victory in my mind." },
-            { s: "Makoto", m: "Strategizing complete. Success probability: 100%." },
-            { s: "Futaba", m: "Hacking into the mainframe... Birthday mode: ACTIVE!" },
-            { s: "Haru", m: "I've prepared tea for after the mission. Be safe!" }
+            { s: "Ann", m: "Everything is ready on my side. Don't be late!" }
         ];
 
         let unlocked = { messages: false, videos: false, drawings: false };
         let currentSection = '';
         let currentIdx = 0;
+        let selectedChoice = null;
 
+        // --- LOGIC ---
         function handleSectionClick(s) {
             if(unlocked[s]) {
                 if(s === 'messages') startChat();
@@ -309,7 +388,8 @@
         }
 
         function startQuiz(s) {
-            currentSection = s; currentIdx = 0;
+            currentSection = s; 
+            currentIdx = 0;
             hideAll();
             document.getElementById('quiz-container').classList.remove('hidden');
             renderQ();
@@ -318,24 +398,52 @@
         function renderQ() {
             const q = quizBank[currentIdx];
             document.getElementById('question-text').innerText = `${currentIdx+1}/15: ${q.q}`;
-            const optCont = document.getElementById('options-container');
-            optCont.innerHTML = '';
-            q.options.forEach(o => {
-                optCont.innerHTML += `<label style="display:block; background:white; color:black; padding:10px; margin-bottom:5px; font-weight:900;"><input type="radio" name="opt" value="${o}"> ${o}</label>`;
-            });
+            const area = document.getElementById('quiz-content-area');
+            area.innerHTML = '';
+            selectedChoice = null;
+
+            if(q.type === "choice") {
+                q.options.forEach(opt => {
+                    const b = document.createElement('button');
+                    b.className = 'option-btn';
+                    b.innerText = opt;
+                    b.onclick = () => {
+                        document.querySelectorAll('.option-btn').forEach(el => el.classList.remove('selected'));
+                        b.classList.add('selected');
+                        selectedChoice = opt;
+                    };
+                    area.appendChild(b);
+                });
+            } else {
+                const input = document.createElement('input');
+                input.type = "text";
+                input.id = "quiz-text-input";
+                input.className = "quiz-input";
+                input.placeholder = "ANSWER HERE";
+                area.appendChild(input);
+                input.focus();
+                input.onkeypress = (e) => { if(e.key === 'Enter') submitAnswer(); };
+            }
         }
 
         function submitAnswer() {
             const q = quizBank[currentIdx];
-            const ans = document.querySelector('input[name="opt"]:checked')?.value;
+            let ans = "";
+            if(q.type === "choice") ans = selectedChoice;
+            else ans = document.getElementById('quiz-text-input').value.trim();
+
             if(!ans) return;
-            if(ans === q.answer) {
+
+            if(ans.toString().toLowerCase() === q.answer.toLowerCase()) {
+                playSound('audio-correct');
                 currentIdx++;
                 if(currentIdx >= 15) {
+                    playSound('audio-clear');
                     unlocked[currentSection] = true;
                     goHome();
                 } else renderQ();
             } else {
+                playSound('audio-wrong');
                 document.getElementById('trump-modal').classList.remove('hidden');
             }
         }
@@ -368,15 +476,21 @@
             
             if(s === 'videos') {
                 title.innerText = "RESTORED MEMORIES";
+                // Fixed media paths
                 items.innerHTML = `
-                    <div class="media-box"><img src="https://via.placeholder.com/600x400/000000/FFFFFF?text=MEMORY+VIDEO+1" alt="Video placeholder"></div>
-                    <div class="media-box"><img src="https://via.placeholder.com/600x400/000000/FFFFFF?text=MEMORY+VIDEO+2" alt="Video placeholder"></div>
+                    <div class="media-box">
+                        <video controls poster="photo1.jpg">
+                            <source src="video1.mp4" type="video/mp4">
+                            Your browser does not support videos.
+                        </video>
+                    </div>
+                    <div class="media-box"><img src="photo1.jpg" onerror="this.src='https://via.placeholder.com/400x300?text=Photo1.jpg+Not+Found'"></div>
                 `;
             } else {
                 title.innerText = "GALLERY OF THIEVES";
                 items.innerHTML = `
-                    <div class="media-box"><img src="https://via.placeholder.com/600x800/000000/FFFFFF?text=JOKER+ART" alt="Art placeholder"></div>
-                    <div class="media-box"><img src="https://via.placeholder.com/600x800/000000/FFFFFF?text=PANTHER+ART" alt="Art placeholder"></div>
+                    <div class="media-box"><img src="drawing1.jpg" onerror="this.src='https://via.placeholder.com/400x500?text=Drawing1.jpg+Not+Found'"></div>
+                    <div class="media-box"><img src="drawing2.jpg" onerror="this.src='https://via.placeholder.com/400x500?text=Drawing2.jpg+Not+Found'"></div>
                 `;
             }
         }
@@ -394,30 +508,24 @@
         }
 
         function syncUI() {
-            if(unlocked.messages) {
-                document.getElementById('btn-messages').classList.add('unlocked');
-                document.getElementById('reveal-1').classList.remove('hidden');
-            }
-            if(unlocked.videos) {
-                document.getElementById('btn-videos').classList.add('unlocked');
-                document.getElementById('reveal-2').classList.remove('hidden');
-            }
-            if(unlocked.drawings) {
-                document.getElementById('btn-drawings').classList.add('unlocked');
-                document.getElementById('reveal-3').classList.remove('hidden');
-            }
+            if(unlocked.messages) { document.getElementById('btn-messages').classList.add('unlocked'); document.getElementById('reveal-1').classList.remove('hidden'); }
+            if(unlocked.videos) { document.getElementById('btn-videos').classList.add('unlocked'); document.getElementById('reveal-2').classList.remove('hidden'); }
+            if(unlocked.drawings) { document.getElementById('btn-drawings').classList.add('unlocked'); document.getElementById('reveal-3').classList.remove('hidden'); }
         }
 
         function checkMasterCode() {
             if(document.getElementById('master-code-input').value === "11037") {
+                playSound('audio-code-ok');
                 unlocked = { messages: true, videos: true, drawings: true };
                 goHome();
+            } else {
+                playSound('audio-code-fail');
             }
         }
 
         function closeTrump() { document.getElementById('trump-modal').classList.add('hidden'); }
 
-        // Matter.js Logic
+        // --- PHYSICS ---
         window.onload = () => {
             const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
             const engine = Engine.create();
@@ -426,10 +534,8 @@
                 canvas: canvas, engine: engine,
                 options: { width: window.innerWidth, height: window.innerHeight, wireframes: false, background: 'transparent' }
             });
-
             const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight+50, window.innerWidth, 100, { isStatic: true });
             Composite.add(engine.world, ground);
-
             const spawn = () => {
                 const c = Bodies.circle(Math.random()*window.innerWidth, -50, 20, {
                     restitution: 0.5,
@@ -437,17 +543,15 @@
                 });
                 Composite.add(engine.world, c);
             };
-
             for(let i=0; i<7; i++) spawn();
-
             Events.on(engine, 'afterUpdate', () => {
                 engine.world.bodies.forEach(b => {
                     if(b.position.y > window.innerHeight + 50) {
                         Matter.Body.setPosition(b, { x: Math.random()*window.innerWidth, y: -50 });
+                        Matter.Body.setVelocity(b, { x: 0, y: 0 });
                     }
                 });
             });
-
             Render.run(render);
             Runner.run(Runner.create(), engine);
         };
