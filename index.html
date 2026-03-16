@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Take Your GIFT</title>
+    <title>Take Your GIFT - Royal Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -61,7 +61,7 @@
             background: #111;
             border: 4px solid var(--p5-white);
             border-radius: 20px;
-            height: 75vh;
+            height: 80vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -126,6 +126,8 @@
             transform: rotate(-0.5deg);
             box-shadow: 10px 10px 0px var(--p5-red), -3px -3px 0px var(--p5-black);
             border: 2px solid var(--p5-black);
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         h1 {
@@ -167,12 +169,18 @@
             box-shadow: 8px 8px 0px var(--p5-red);
             background: #000;
             width: 100%;
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
         }
-        .media-box img, .media-box video { 
-            width: 100%; 
-            display: block; 
-            max-height: 500px;
-            object-fit: contain;
+        .media-box img { 
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .media-box iframe {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
         }
 
         .option-btn {
@@ -261,8 +269,8 @@
     <div id="trump-modal" class="hidden" onclick="closeTrump()">
         <div style="background:var(--p5-red); padding:40px; text-align:center; border:5px solid white; transform:rotate(-2deg); box-shadow: 15px 15px 0 black;">
             <h2 style="font-size:3rem;">WRONG!</h2>
-            <p style="margin:20px 0; font-weight: bold;">YOU ARE NOT READY</p>
-            <button class="btn" style="text-align:center; padding-left:0; background: black;">I WILL TRY AGAIN</button>
+            <p style="margin:20px 0; font-weight: bold;">NETANYAHU WILL 🍇 YOU</p>
+            <button class="btn" style="text-align:center; padding-left:0; background: black;">SORRY >: </button>
         </div>
     </div>
 
@@ -276,7 +284,7 @@
         </div>
     </div>
 
-    <!-- Geet Success Modal -->
+    <!-- Geet Success Modal (Only used for Master Code now, or as a brief flash) -->
     <div id="geet-modal" class="hidden" onclick="this.classList.add('hidden')">
         <div style="background:var(--p5-red); padding:15px; text-align:center; border:5px solid white; box-shadow: 15px 15px 0 black; max-width: 90%;">
             <img src="geet.jpg" onerror="this.src='https://via.placeholder.com/400x400?text=Geet+Image'" style="max-width: 100%; border: 2px solid black; display: block;">
@@ -355,7 +363,7 @@
             else { bgm.muted = true; btn.innerText = "🔇"; }
         }
 
-        // --- Question Banks ---
+        // --- Question Banks (15 Questions Each) ---
         const banks = {
             messages: [
                 { type: "choice", q: "P5: Who is the first party member you meet?", options: ["Ryuji", "Ann", "Morgana", "Yusuke"], answer: "Ryuji", hint: "A loud-mouthed student with dyed blonde hair." },
@@ -367,7 +375,7 @@
                 { type: "choice", q: "P5: Morgana's catchphrase?", options: ["Looking cool Joker", "Go to sleep", "Steal your heart", "Meow"], answer: "Looking cool Joker", hint: "Something he says when the hero performs well." },
                 { type: "choice", q: "Fata Morgana: The Maid's true role?", options: ["Observer", "Killer", "Lover", "Mother"], answer: "Observer", hint: "She watches the tragedies of the mansion." },
                 { type: "choice", q: "Danganronpa: Who is the mascot?", options: ["Monokuma", "Monomi", "Junko", "Kuma"], answer: "Monokuma", hint: "A half-white, half-black bear." },
-                { type: "text", q: "Code Geass: Lelouch's alias?", answer: "Zero", hint: "A number that represents nothingness." },
+                { type: "text", q: "Code Geass: Lelouch's alias?(Numbers 0 ,1 , 2,etc)", answer: "0", hint: "A number that represents nothingness." },
                 { type: "choice", q: "Hollow Knight: The main weapon?", options: ["Nail", "Sword", "Spear", "Axe"], answer: "Nail", hint: "A simple, blunt-looking sharp tool." },
                 { type: "choice", q: "P5: Ann Takamaki's Persona?", options: ["Carmen", "Johanna", "Milady", "Necronomicon"], answer: "Carmen", hint: "A woman in a red dress with roses." },
                 { type: "choice", q: "Fata Morgana: The house's type?", options: ["Mansion", "Castle", "Cottage", "Apartment"], answer: "Mansion", hint: "A large, cursed house." },
@@ -424,11 +432,15 @@
         }
 
         function handleSectionClick(s) {
-            startBGM(); // Start music on any interaction
+            startBGM();
             if(unlocked[s]) {
-                if(s === 'messages') startChat();
-                else showGallery(s);
+                openContent(s);
             } else { startQuiz(s); }
+        }
+
+        function openContent(s) {
+            if(s === 'messages') startChat();
+            else showGallery(s);
         }
 
         function startQuiz(s) {
@@ -447,7 +459,6 @@
             selectedChoice = null;
 
             if(q.type === "choice") {
-                // Shuffle options so the answer isn't always the first one
                 const shuffledOptions = shuffleArray([...q.options]);
                 shuffledOptions.forEach(opt => {
                     const b = document.createElement('button');
@@ -492,8 +503,8 @@
                 if(currentIdx >= 15) {
                     playSound('audio-clear');
                     unlocked[currentSection] = true;
-                    document.getElementById('geet-modal').classList.remove('hidden');
-                    goHome();
+                    // Directly open the content instead of just showing a success modal
+                    openContent(currentSection); 
                 } else renderQ();
             } else {
                 playSound('audio-wrong');
@@ -509,7 +520,8 @@
             const msgs = [
                 { s: "Morgana", m: "Joker! The target's data is secured." },
                 { s: "Ryuji", m: "Finally! No more secrets." },
-                { s: "Ann", m: "The connection is stable now." }
+                { s: "Ann", m: "The connection is stable now." },
+                { s: "Futaba", m: "Encryption cracked! You can see the files now." }
             ];
             msgs.forEach((msg, i) => {
                 setTimeout(() => {
@@ -529,24 +541,23 @@
             
             if(s === 'videos') {
                 title.innerText = "RESTORED MEMORIES (PHOTOS)";
+                // Replace with your actual image URLs
                 items.innerHTML = `
-                    <div class="media-box"><img src="photo1.jpg" alt="Memory 1"></div>
-                    <div class="media-box"><img src="photo2.jpg" alt="Memory 2"></div>
+                    <div class="media-box"><img src="https://via.placeholder.com/600x400?text=Memory+Photo+1" alt="Memory 1"></div>
+                    <div class="media-box"><img src="https://via.placeholder.com/600x400?text=Memory+Photo+2" alt="Memory 2"></div>
                 `;
             } else {
-                title.innerText = "GALLERY OF THIEVES (VIDEOS)";
-                items.innerHTML = `
-                    <div class="media-box">
-                        <video controls poster="video1_thumb.jpg">
-                            <source src="video1.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="media-box">
-                        <video controls poster="video2_thumb.jpg">
-                            <source src="video2.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                `;
+                title.innerText = "GALLERY OF THIEVES (YOUTUBE)";
+                // Using YouTube embed code for stability
+                // Replace "VIDEO_ID" with actual IDs (e.g., dQw4w9WgXcQ)
+                const videoIds = ["dQw4w9WgXcQ", "dQw4w9WgXcQ"]; 
+                videoIds.forEach(id => {
+                    items.innerHTML += `
+                        <div class="media-box">
+                            <iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>
+                        </div>
+                    `;
+                });
             }
         }
 
@@ -572,6 +583,7 @@
             if(document.getElementById('master-code-input').value === "11037") {
                 playSound('audio-code-ok');
                 unlocked = { messages: true, videos: true, drawings: true };
+                document.getElementById('geet-modal').classList.remove('hidden');
                 goHome();
             } else { playSound('audio-code-fail'); }
         }
@@ -579,7 +591,6 @@
         function closeTrump() { document.getElementById('trump-modal').classList.add('hidden'); }
 
         window.onload = () => {
-            // Physics for Falling Chibis
             const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
             const engine = Engine.create();
             const canvas = document.getElementById('chibi-canvas');
